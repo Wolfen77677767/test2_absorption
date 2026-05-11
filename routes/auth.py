@@ -31,53 +31,58 @@ def _resolve_verification_email(identifier_or_email):
 @auth_bp.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        first_name = request.form.get("first_name", "").strip()
-        last_name = request.form.get("last_name", "").strip()
-        username = request.form.get("username", "").strip().lower()
-        email = normalize_email(request.form.get("email", ""))
-        confirm_email = normalize_email(request.form.get("confirm_email", ""))
-        password = request.form.get("password", "")
-        confirm_password = request.form.get("confirm_password", request.form.get("confirm", ""))
-        raw_phone = request.form.get("phone", "")
-        phone, phone_error = validate_moroccan_phone(raw_phone)
+        try:
+            first_name = request.form.get("first_name", "").strip()
+            last_name = request.form.get("last_name", "").strip()
+            username = request.form.get("username", "").strip().lower()
+            email = normalize_email(request.form.get("email", ""))
+            confirm_email = normalize_email(request.form.get("confirm_email", ""))
+            password = request.form.get("password", "")
+            confirm_password = request.form.get("confirm_password", request.form.get("confirm", ""))
+            raw_phone = request.form.get("phone", "")
+            phone, phone_error = validate_moroccan_phone(raw_phone)
 
-        if not first_name or not last_name or not username or not email or not confirm_email or not password or not confirm_password:
-            flash("All fields are required.", "danger")
+            if not first_name or not last_name or not username or not email or not confirm_email or not password or not confirm_password:
+                flash("All fields are required.", "danger")
+                return render_template("signup.html")
+
+            if email != confirm_email:
+                flash("Email and confirm email must match.", "danger")
+                return render_template("signup.html")
+
+            if password != confirm_password:
+                flash("Password and confirm password must match.", "danger")
+                return render_template("signup.html")
+
+            if not password_valid(password):
+                flash("Password must be at least 8 characters long.", "danger")
+                return render_template("signup.html")
+
+            if phone_error:
+                return render_template("signup.html", phone_error=phone_error)
+
+            success, message = register_user(
+                first_name,
+                last_name,
+                username,
+                email,
+                password,
+                phone
+            )
+
+            if not success:
+                if message == MOROCCAN_PHONE_ERROR_MESSAGE:
+                    return render_template("signup.html", phone_error=message)
+
+                flash(message, "danger")
+                return render_template("signup.html")
+
+            flash(message, "success")
+            return redirect(url_for("auth.verify", email=email))
+        except Exception as exc:
+            logger.exception("Signup failed for %s %s: %s", request.form.get("username"), request.form.get("email"), exc)
+            flash("An internal error occurred while creating your account. Please try again later.", "danger")
             return render_template("signup.html")
-
-        if email != confirm_email:
-            flash("Email and confirm email must match.", "danger")
-            return render_template("signup.html")
-
-        if password != confirm_password:
-            flash("Password and confirm password must match.", "danger")
-            return render_template("signup.html")
-
-        if not password_valid(password):
-            flash("Password must be at least 8 characters long.", "danger")
-            return render_template("signup.html")
-
-        if phone_error:
-            return render_template("signup.html", phone_error=phone_error)
-
-        success, message = register_user(
-            first_name,
-            last_name,
-            username,
-            email,
-            password,
-            phone
-        )
-
-        if not success:
-            if message == MOROCCAN_PHONE_ERROR_MESSAGE:
-                return render_template("signup.html", phone_error=message)
-
-            flash(message, "danger")
-            return render_template("signup.html")
-
-        flash(message, "success")
-        return redirect(url_for("auth.verify", email=email))
 
     return render_template("signup.html")
 
