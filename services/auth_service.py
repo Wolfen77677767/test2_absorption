@@ -139,7 +139,12 @@ def register_user(first_name, last_name, username, email, password, phone=None):
     )
 
     db.session.add(user)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as exc:
+        db.session.rollback()
+        logger.exception("Failed to create user %s: %s", username, exc)
+        return False, "Unable to create your account right now. Please try again later."
 
     try:
         send_verification_email(email, first_name, verification_code)
