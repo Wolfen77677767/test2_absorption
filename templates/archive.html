@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-shell">
+    <div class="page-header modern-header">
+        <div>
+            <span class="eyebrow">Archive</span>
+            <h1>Archived records</h1>
+            <p class="page-subtitle">Review deleted accounts, completed tasks, and archived items.</p>
+        </div>
+    </div>
+
+    {% if archived_items %}
+    <div class="archive-grid">
+        {% for item in archived_items %}
+        <article class="archive-card">
+            <div class="archive-card-top">
+                <span class="badge bg-secondary">{{ item.type }}</span>
+                <span class="text-muted">{{ item.date }}</span>
+            </div>
+            <h3>{{ item.title }}</h3>
+            <p class="text-muted">{{ item.summary }}</p>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-card empty-page-state">
+        <div class="empty-icon">
+            <i class="fas fa-archive"></i>
+        </div>
+        <h3>No archived data yet</h3>
+        <p class="text-muted">Archived records will appear here once items are archived.</p>
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary">Back to dashboard</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

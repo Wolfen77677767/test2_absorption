@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero-section mb-5">
+    <div class="hero-content">
+        <div class="hero-main-logo-wrapper">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="AOAF Logo" class="hero-main-logo">
+        </div>
+        <h1 class="hero-title">Gas Absorption Solver</h1>
+        <p class="hero-subtitle">
+            Advanced engineering tool for solving gas absorption exercises<br>
+            using the McCabe-Thiele graphical method
+        </p>
+        <div class="hero-buttons">
+            <a href="/calculate" class="btn btn-primary btn-lg">
+                <i class="fas fa-calculator me-2"></i>Start Calculation
+            </a>
+            <a href="/theory" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-book me-2"></i>Learn Theory
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section class="mb-5">
+    <div class="row">
+        <!-- Feature 1 -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 border-0">
+                <div class="card-body text-center pt-4">
+                    <div style="font-size: 48px; color: #0066FF; margin-bottom: 16px;">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h5 class="card-title mb-3" style="color: #00D9FF;">McCabe-Thiele Method</h5>
+                    <p class="card-text text-muted" style="color: #a8b5c8; font-size: 14px;">
+                        Accurate graphical method for designing gas absorption columns with detailed step-by-step analysis
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 border-0">
+                <div class="card-body text-center pt-4">
+                    <div style="font-size: 48px; color: #00D9FF; margin-bottom: 16px;">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+                    <h5 class="card-title mb-3" style="color: #00D9FF;">Interactive Analysis</h5>
+                    <p class="card-text text-muted" style="color: #a8b5c8; font-size: 14px;">
+                        Adjust parameters dynamically and perform sensitivity analysis to optimize absorption efficiency
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 border-0">
+                <div class="card-body text-center pt-4">
+                    <div style="font-size: 48px; color: #10b981; margin-bottom: 16px;">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h5 class="card-title mb-3" style="color: #00D9FF;">Export Results</h5>
+                    <p class="card-text text-muted" style="color: #a8b5c8; font-size: 14px;">
+                        Generate comprehensive PDF reports, CSV data, and high-resolution graphs for documentation
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- QUICK START SECTION -->
+<section>
+    <div class="card border-0">
+        <div class="card-header bg-transparent border-bottom border-info">
+            <h5 class="mb-0">
+                <i class="fas fa-rocket me-2" style="color: #FF6B6B;"></i>Quick Start
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div style="background: rgba(0, 102, 255, 0.05); padding: 20px; border-radius: 8px; border-left: 3px solid #0066FF;">
+                        <h6 style="color: #00D9FF; margin-bottom: 10px;">
+                            <i class="fas fa-info-circle me-2"></i>What You Need
+                        </h6>
+                        <ul style="font-size: 14px; color: #a8b5c8; margin-bottom: 0;">
+                            <li>Gas inlet composition (y₀)</li>
+                            <li>Gas and liquid flow rates (G', L')</li>
+                            <li>Equilibrium relationship slope (m)</li>
+                            <li>Target outlet composition (y_target)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div style="background: rgba(16, 185, 129, 0.05); padding: 20px; border-radius: 8px; border-left: 3px solid #10b981;">
+                        <h6 style="color: #00D9FF; margin-bottom: 10px;">
+                            <i class="fas fa-star me-2"></i>You'll Get
+                        </h6>
+                        <ul style="font-size: 14px; color: #a8b5c8; margin-bottom: 0;">
+                            <li>Number of theoretical stages</li>
+                            <li>Interactive McCabe-Thiele graph</li>
+                            <li>Stage-by-stage calculations</li>
+                            <li>Sensitivity analysis results</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .qs-shell {
+        color: #e8eefc;
+    }
+
+    .qs-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 28px;
+        background:
+            radial-gradient(circle at top right, rgba(0, 102, 255, 0.28), transparent 34%),
+            radial-gradient(circle at bottom left, rgba(21, 209, 160, 0.18), transparent 28%),
+            linear-gradient(145deg, rgba(18, 24, 47, 0.96), rgba(9, 13, 29, 0.96));
+        box-shadow: 0 28px 70px rgba(0, 0, 0, 0.28);
+    }
+
+    .qs-hero-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0.85rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #bcd3ff;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .qs-title {
+        margin: 1rem 0 0.6rem;
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 700;
+        color: #f6f9ff;
+    }
+
+    .qs-subtitle {
+        max-width: 760px;
+        margin: 0;
+        color: #c3cee6;
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+
+    .qs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .qs-card {
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.025)),
+            linear-gradient(145deg, rgba(16, 21, 40, 0.98), rgba(10, 13, 25, 0.98));
+        box-shadow: 0 24px 55px rgba(0, 0, 0, 0.24);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .qs-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 32px 80px rgba(0, 0, 0, 0.32);
+        border-color: rgba(0, 102, 255, 0.3);
+    }
+
+    .qs-card-header {
+        padding: 2rem 2rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .qs-card-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(0, 102, 255, 0.2), rgba(0, 217, 255, 0.15));
+        color: #60a5fa;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .qs-card-title {
+        margin: 0 0 0.5rem;
+        color: #ffffff;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .qs-card-description {
+        margin: 0;
+        color: #a8b5c8;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .qs-card-body {
+        padding: 1.5rem 2rem 2rem;
+    }
+
+    .qs-card-features {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1.5rem;
+    }
+
+    .qs-card-features li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        color: #94a3b8;
+        font-size: 0.9rem;
+    }
+
+    .qs-card-features li::before {
+        content: "✓";
+        color: #10b981;
+        font-weight: bold;
+    }
+
+    .qs-card-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        background: linear-gradient(135deg, rgba(0, 102, 255, 0.8), rgba(0, 217, 255, 0.6));
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .qs-card-btn:hover {
+        background: linear-gradient(135deg, rgba(0, 102, 255, 0.9), rgba(0, 217, 255, 0.7));
+        transform: translateY(-1px);
+    }
+
+    .qs-card-btn i {
+        font-size: 0.9rem;
+    }
+
+    /* Specific card colors */
+    .qs-card-absorption .qs-card-icon {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.15));
+        color: #34d399;
+    }
+
+    .qs-card-unit-ops .qs-card-icon {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.15));
+        color: #fbbf24;
+    }
+
+    .qs-card-ai .qs-card-icon {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.15));
+        color: #a78bfa;
+    }
+</style>
+
+<div class="container-fluid mt-4">
+    <!-- HERO SECTION -->
+    <div class="qs-hero">
+        <div class="qs-hero-kicker">
+            <i class="fas fa-rocket"></i>
+            Quick Access Hub
+        </div>
+        <h1 class="qs-title">Quick Solver</h1>
+        <p class="qs-subtitle">
+            Access all your engineering tools in one professional dashboard. Choose from specialized solvers,
+            comprehensive unit operations, or AI-powered assistance.
+        </p>
+    </div>
+
+    <!-- CARDS GRID -->
+    <div class="qs-grid">
+        <!-- ABSORPTION SOLVER CARD -->
+        <div class="qs-card qs-card-absorption">
+            <div class="qs-card-header">
+                <div class="qs-card-icon">
+                    <i class="fas fa-arrow-down-wide-short"></i>
+                </div>
+                <h2 class="qs-card-title">Absorption Solver</h2>
+                <p class="qs-card-description">
+                    Complete gas-liquid absorption calculations with McCabe-Thiele method,
+                    stage optimization, and detailed process analysis.
+                </p>
+            </div>
+            <div class="qs-card-body">
+                <ul class="qs-card-features">
+                    <li>McCabe-Thiele diagrams</li>
+                    <li>Stage number calculations</li>
+                    <li>Sensitivity analysis</li>
+                    <li>Process optimization</li>
+                </ul>
+                <a href="{{ url_for('main.calculate') }}" class="qs-card-btn">
+                    <i class="fas fa-calculator"></i>
+                    Open Absorption Solver
+                </a>
+            </div>
+        </div>
+
+        <!-- UNIT OPERATIONS CARD -->
+        <div class="qs-card qs-card-unit-ops">
+            <div class="qs-card-header">
+                <div class="qs-card-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h2 class="qs-card-title">Unit Operations</h2>
+                <p class="qs-card-description">
+                    Comprehensive collection of 23+ professional unit operation calculators
+                    covering separation, heat transfer, mass transfer, and mechanical processes.
+                </p>
+            </div>
+            <div class="qs-card-body">
+                <ul class="qs-card-features">
+                    <li>23+ unit operations</li>
+                    <li>Interactive calculators</li>
+                    <li>Process visualization</li>
+                    <li>Detailed results</li>
+                </ul>
+                <a href="{{ url_for('unit_ops.unit_operations_index') }}" class="qs-card-btn">
+                    <i class="fas fa-tools"></i>
+                    Browse Unit Operations
+                </a>
+            </div>
+        </div>
+
+        <!-- AI ASSISTANT CARD -->
+        <div class="qs-card qs-card-ai">
+            <div class="qs-card-header">
+                <div class="qs-card-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h2 class="qs-card-title">AI Assistant</h2>
+                <p class="qs-card-description">
+                    Intelligent AI assistant for general questions and engineering support.
+                    Get help with calculations, process design, troubleshooting, and any topic.
+                </p>
+            </div>
+            <div class="qs-card-body">
+                <ul class="qs-card-features">
+                    <li>General Q&A</li>
+                    <li>Engineering expertise</li>
+                    <li>Calculation help</li>
+                    <li>24/7 availability</li>
+                </ul>
+                <a href="#" class="qs-card-btn" onclick="openChatbot(event)">
+                    <i class="fas fa-comments"></i>
+                    Start AI Chat
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openChatbot(event) {
+    if (event) {
+        event.preventDefault();
+    }
+    // Open the chatbot widget
+    const chatbotWidget = document.getElementById('chatbotWidget');
+    const chatbotPanel = document.getElementById('chatbotPanel');
+    const chatbotToggle = document.getElementById('chatbotToggle');
+
+    if (chatbotWidget && chatbotPanel && chatbotToggle) {
+        chatbotWidget.classList.add('open');
+        chatbotPanel.setAttribute('aria-hidden', 'false');
+        chatbotToggle.setAttribute('aria-expanded', 'true');
+    }
+}
+</script>
+{% endblock %}

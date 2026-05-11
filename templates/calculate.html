@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+<div class="results-header mb-4">
+    <div>
+        <h2 class="results-title">
+            <i class="fas fa-calculator me-2" style="color: #0066FF;"></i>{{ page_title or "Solver Configuration" }}
+        </h2>
+        <p style="color: #a8b5c8; font-size: 14px; margin-top: 8px;">
+            Configure your gas absorption parameters and click Solve to run the calculation
+        </p>
+    </div>
+</div>
+
+<!-- FORM SECTION -->
+{% if error_message %}
+<div class="alert alert-danger" role="alert">
+    <i class="fas fa-exclamation-circle me-2"></i>{{ error_message }}
+</div>
+{% endif %}
+<form method="POST" id="absorptionForm" class="form-section" novalidate>
+    
+    <!-- INPUT PARAMETERS SECTION -->
+    <div class="form-group-box mb-4">
+        <div class="form-group-title">
+            <i class="fas fa-cog me-2"></i>Input Parameters
+        </div>
+        
+        <div class="row">
+            <!-- y0 - Gas inlet fraction -->
+            <div class="col-lg-6 mb-4" id="y0_container">
+                <label for="y0" class="form-label">
+                    y₀ - Gas Inlet Mole Fraction
+                    <span style="color: #0066FF; font-weight: bold;">*</span>
+                    <button type="button" class="btn btn-sm btn-link p-0 ms-2" data-bs-toggle="tooltip" 
+                            title="Initial mole fraction of solute in the inlet gas stream. Range: 0 to 1">
+                        <i class="fas fa-circle-info" style="color: #00D9FF;"></i>
+                    </button>
+                </label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="y0" name="y0" value="0.06" 
+                           step="0.001" min="0" max="1" required>
+                    <span class="input-group-text">fraction</span>
+                </div>
+                <small class="form-text text-muted">Expected range: 0.001 - 1.0</small>
+            </div>
+
+            <!-- x0 - Liquid inlet fraction -->
+            <div class="col-lg-6 mb-4">
+                <label for="x0" class="form-label">
+                    x₀ - Liquid Inlet Mole Fraction
+                    <span style="color: #0066FF; font-weight: bold;">*</span>
+                    <button type="button" class="btn btn-sm btn-link p-0 ms-2" data-bs-toggle="tooltip" 
+                            title="Initial mole fraction of solute in the inlet liquid stream. Range: 0 to 1">
+                        <i class="fas fa-circle-info" style="color: #00D9FF;"></i>
+                    </button>
+                </label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="x0" name="x0" value="0.0" 
+                           step="0.001" min="0" max="1" required>
+                    <span class="input-group-text">fraction</span>
+                </div>
+                <small class="form-text text-muted">Expected range: 0.001 - 1.0</small>
+            </div>
+
+            <!-- G - Gas flow -->
+            <div class="col-lg-6 mb-4">
+                <label for="G" class="form-label">
+                    G' - Gas Flow Rate
+                    <span style="color: #0066FF; font-weight: bold;">*</span>
+                    <button type="button" class="btn btn-sm btn-link p-0 ms-2" data-bs-toggle="tooltip" 
+                            title="Molar gas flow rate. Units: kmol/h or consistent units">
+                        <i class="fas fa-circle-info" style="color: #00D9FF;"></i>
+                    </button>
+                </label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="G" name="G" value="150" 
+                           step="0.1" min="0.1" required>
+                    <span class="input-group-text">kmol/h</span>
+                </div>
+                <small class="form-text text-muted">Must be > 0</small>
+            </div>
+
+            <!-- L - Liquid flow -->
+            <div class="col-lg-6 mb-4">
+                <label for="L" class="form-label">
+                    L' - Liquid Flow Rate
+                    <span style="color: #0066FF; font-weight: bold;">*</span>
+                    <button type="button" class="btn btn-sm btn-link p-0 ms-2" data-bs-toggle="tooltip" 
+                            title="Molar liquid flow rate. Units: kmol/h or consistent units">
+                        <i class="fas fa-circle-info" style="color: #00D9FF;"></i>
+                    </button>
+                </label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="L" name="L" value="200" 
+                           step="0.1" min="0.1" required>
+                    <span class="input-group-text">kmol/h</span>
+                </div>
+                <small class="form-text text-muted">Must be > 0</small>
+            </div>
+
+            <!-- m - Equilibrium slope -->
+            <div class="col-lg-6 mb-4">
+                <label for="m" class="form-label">
+                    m - Equilibrium Line Slope
+                    <span style="color: #0066FF; font-weight: bold;">*</span>
+                    <button type="button" class="btn btn-sm btn-link p-0 ms-2" data-bs-toggle="tooltip" 
+                            title="Slope of the equilibrium curve. Typical range: 0.1 - 2.0">
+                        <i class="fas fa-circle-info" style="color: #00D9FF;"></i>
+                    </button>
+                </label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="m" name="m" value="0.5" 
+                           step="0.01" min="0.01" required>
+                    <span class="input-group-text">dimensionless</span>
+                </div>
+                <small class="form-text text-muted">Must be > 0</small>
+            </div>
+
+            <!-- y_target - Target outlet -->
+            <div class="col-lg-6 mb-4" id="ytarget_container">
+                <label for="ytarget" class="form-label">
+                    y_target - Target Gas Outlet
+                    <span style="color: #0066FF; font-weight: bold;">*</span>
+                    <button type="button" class="btn btn-sm btn-link p-0 ms-2" data-bs-toggle="tooltip" 
+                            title="Desired mole fraction of solute in the outlet gas stream. Must be < y₀">
+                        <i class="fas fa-circle-info" style="color: #00D9FF;"></i>
+                    </button>
+                </label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="ytarget" name="ytarget" value="0.004" 
+                           step="0.001" min="0" max="1" required>
+                    <span class="input-group-text">fraction</span>
+                </div>
+                <small class="form-text text-muted">Must be &lt; y₀</small>
+            </div>
+
+            <!-- n_stages - Number of stages (Desorption) -->
+            <div class="col-lg-6 mb-4" id="n_stages_container" style="display: none;">
+                <label for="n_stages" class="form-label">
+                    N - Number of Stages
+                    <span style="color: #0066FF; font-weight: bold;">*</span>
+                    <button type="button" class="btn btn-sm btn-link p-0 ms-2" data-bs-toggle="tooltip" 
+                            title="Number of ideal stages for desorption.">
+                        <i class="fas fa-circle-info" style="color: #00D9FF;"></i>
+                    </button>
+                </label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="n_stages" name="n_stages" value="3" 
+                           step="1" min="1">
+                    <span class="input-group-text">stages</span>
+                </div>
+                <small class="form-text text-muted">Must be &gt;= 1</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROCESS TYPE SECTION -->
+    <div class="form-group-box mb-4">
+        <div class="form-group-title">
+            <i class="fas fa-random me-2"></i>Process Settings
+        </div>
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <label for="process_type" class="form-label">
+                    Process Type
+                    <span style="color: #0066FF; font-weight: bold;">*</span>
+                </label>
+                <select class="form-select" id="process_type" name="process_type" required onchange="toggleProcessFields()">
+                    <option value="absorption" selected>Absorption</option>
+                    <option value="desorption">Desorption</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- OPERATING MODE SECTION -->
+    <div class="form-group-box mb-4" id="mode_section">
+        <div class="form-group-title">
+            <i class="fas fa-project-diagram me-2"></i>Operating Mode
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <label for="mode" class="form-label">
+                    Flow Mode
+                    <span style="color: #0066FF; font-weight: bold;">*</span>
+                    <button type="button" class="btn btn-sm btn-link p-0 ms-2" data-bs-toggle="tooltip" 
+                            title="Counter-current: most efficient; Co-current: less efficient; Cross-flow: intermediate">
+                        <i class="fas fa-circle-info" style="color: #00D9FF;"></i>
+                    </button>
+                </label>
+                <select class="form-select" id="mode" name="mode" required>
+                    <option value="counter" selected>Counter-Current Flow</option>
+                    <option value="cross">Cross-Flow</option>
+                    <option value="co">Co-Current Flow</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANALYSIS OPTIONS SECTION -->
+    <div class="form-group-box mb-4">
+        <div class="form-group-title">
+            <i class="fas fa-sliders-h me-2"></i>Analysis Options
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="show_steps" name="show_steps">
+                    <label class="form-check-label" for="show_steps">
+                        Show Step-by-Step Calculation
+                        <button type="button" class="btn btn-sm btn-link p-0 ms-2" data-bs-toggle="tooltip" 
+                                title="Display detailed stage-by-stage results for verification">
+                            <i class="fas fa-circle-info" style="color: #00D9FF;"></i>
+                        </button>
+                    </label>
+                </div>
+                <small class="form-text text-muted">Provides detailed breakdown of each stage</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- VALIDATION MESSAGE -->
+    <div id="validationAlert" class="alert alert-warning d-none mb-4" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span id="validationMessage"></span>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="d-flex gap-3">
+        <button type="submit" class="btn btn-primary btn-lg" id="solveBtn">
+            <i class="fas fa-play me-2"></i>Solve
+        </button>
+        <button type="reset" class="btn btn-outline-light btn-lg">
+            <i class="fas fa-redo me-2"></i>Reset
+        </button>
+    </div>
+
+</form>
+
+<!-- LOADING SPINNER OVERLAY -->
+<div class="spinner-overlay" id="loadingOverlay">
+    <div class="text-center">
+        <div class="spinner"></div>
+        <div class="spinner-text">Calculating absorption stages...</div>
+    </div>
+</div>
+
+<script>
+function toggleProcessFields() {
+    const processType = document.getElementById('process_type').value;
+    const y0Container = document.getElementById('y0_container');
+    const ytargetContainer = document.getElementById('ytarget_container');
+    const modeSection = document.getElementById('mode_section');
+    const nStagesContainer = document.getElementById('n_stages_container');
+    
+    if (processType === 'desorption') {
+        if(y0Container) y0Container.style.display = 'none';
+        if(ytargetContainer) ytargetContainer.style.display = 'none';
+        if(modeSection) modeSection.style.display = 'block';
+        if(nStagesContainer) nStagesContainer.style.display = 'block';
+    } else {
+        if(y0Container) y0Container.style.display = 'block';
+        if(ytargetContainer) ytargetContainer.style.display = 'block';
+        if(modeSection) modeSection.style.display = 'block';
+        if(nStagesContainer) nStagesContainer.style.display = 'none';
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    toggleProcessFields();
+});
+
+// Form Validation and Submission
+document.getElementById('absorptionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Reset validation message
+    const validationAlert = document.getElementById('validationAlert');
+    validationAlert.classList.add('d-none');
+    
+    // Get form values
+    const y0 = parseFloat(document.getElementById('y0').value);
+    const x0 = parseFloat(document.getElementById('x0').value);
+    const ytarget = parseFloat(document.getElementById('ytarget').value);
+    const G = parseFloat(document.getElementById('G').value);
+    const L = parseFloat(document.getElementById('L').value);
+    const m = parseFloat(document.getElementById('m').value);
+    
+    // Validation
+    let errors = [];
+    
+    const processType = document.getElementById('process_type').value;
+
+    if (isNaN(x0) || x0 < 0 || x0 > 1) {
+        errors.push('x₀ must be between 0 and 1');
+    }
+
+    if (processType === 'absorption') {
+        if (isNaN(y0) || y0 < 0 || y0 > 1) {
+            errors.push('y₀ must be between 0 and 1');
+        }
+        if (isNaN(ytarget) || ytarget < 0 || ytarget > 1) {
+            errors.push('y_target must be between 0 and 1');
+        }
+        if (ytarget >= y0) {
+            errors.push('y_target must be less than y₀');
+        }
+    } else {
+        const nStages = parseInt(document.getElementById('n_stages').value);
+        if (isNaN(nStages) || nStages < 1) {
+            errors.push('N must be >= 1');
+        }
+    }
+    if (isNaN(G) || G <= 0) {
+        errors.push('G must be positive');
+    }
+    if (isNaN(L) || L <= 0) {
+        errors.push('L must be positive');
+    }
+    if (isNaN(m) || m <= 0) {
+        errors.push('m must be positive');
+    }
+    
+    if (errors.length > 0) {
+        document.getElementById('validationMessage').textContent = errors.join(' • ');
+        validationAlert.classList.remove('d-none');
+        return;
+    }
+    
+    // Show loading overlay
+    document.getElementById('loadingOverlay').classList.add('active');
+    
+    // Submit form
+    this.submit();
+});
+</script>
+
+{% endblock %}

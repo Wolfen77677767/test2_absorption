@@ -1,0 +1,841 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+<style>
+    .uoc-shell {
+        color: #e8eefc;
+    }
+
+    .uoc-panel,
+    .uoc-hero {
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 26px;
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.025)),
+            linear-gradient(145deg, rgba(16, 21, 40, 0.98), rgba(10, 13, 25, 0.98));
+        box-shadow: 0 24px 55px rgba(0, 0, 0, 0.24);
+    }
+
+    .uoc-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 1.8rem;
+        background:
+            radial-gradient(circle at top right, rgba(0, 102, 255, 0.22), transparent 32%),
+            radial-gradient(circle at bottom left, rgba(0, 217, 255, 0.12), transparent 24%),
+            linear-gradient(145deg, rgba(16, 21, 40, 0.98), rgba(10, 13, 25, 0.98));
+    }
+
+    .uoc-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.45rem 0.8rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #d8e5ff;
+        background: rgba(255, 255, 255, 0.06);
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .uoc-title {
+        margin: 1rem 0 0.45rem;
+        color: #ffffff;
+        font-size: clamp(1.9rem, 4vw, 2.75rem);
+        font-weight: 700;
+    }
+
+    .uoc-definition {
+        margin: 0;
+        color: #bdd0f0;
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+
+    .uoc-meta {
+        margin-top: 1.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.85rem;
+    }
+
+    .uoc-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 0.95rem;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #dce6fb;
+    }
+
+    .uoc-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.8rem 1.1rem;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #f4f8ff;
+        background: rgba(255, 255, 255, 0.05);
+        text-decoration: none;
+        font-weight: 700;
+        transition: all 0.2s ease;
+    }
+
+    .uoc-action:hover {
+        color: #fff;
+        border-color: rgba(0, 102, 255, 0.35);
+        transform: translateY(-1px);
+    }
+
+    .uoc-section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        margin-bottom: 1.15rem;
+        color: #f4f8ff;
+        font-size: 1.15rem;
+        font-weight: 700;
+    }
+
+    .uoc-panel {
+        padding: 1.4rem;
+    }
+
+    .uoc-panel p,
+    .uoc-panel li,
+    .uoc-panel small,
+    .uoc-panel label {
+        color: #cfdaef;
+    }
+
+    .uoc-form-label {
+        color: #f2f7ff;
+        font-weight: 600;
+    }
+
+    .uoc-form-hint {
+        display: block;
+        margin-top: 0.35rem;
+        color: #8ea4c8;
+        font-size: 0.82rem;
+    }
+
+    .uoc-input,
+    .uoc-select,
+    .uoc-textarea {
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #f7fbff;
+    }
+
+    .uoc-input,
+    .uoc-select {
+        min-height: 52px;
+    }
+
+    .uoc-textarea {
+        min-height: 128px;
+    }
+
+    .uoc-input::placeholder,
+    .uoc-textarea::placeholder {
+        color: #8297bb;
+    }
+
+    .uoc-input:focus,
+    .uoc-select:focus,
+    .uoc-textarea:focus {
+        border-color: rgba(0, 102, 255, 0.45);
+        box-shadow: 0 0 0 0.18rem rgba(0, 102, 255, 0.16);
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+    }
+
+    .uoc-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.92rem 1.25rem;
+        border: 0;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #0066ff, #00a6ff);
+        color: #fff;
+        font-weight: 800;
+        box-shadow: 0 18px 32px rgba(0, 102, 255, 0.28);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .uoc-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 20px 36px rgba(0, 102, 255, 0.34);
+    }
+
+    .uoc-result-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .uoc-result-item {
+        padding: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .uoc-result-label {
+        color: #9bb0d4;
+        font-size: 0.84rem;
+        margin-bottom: 0.35rem;
+    }
+
+    .uoc-result-value {
+        color: #ffffff;
+        font-size: 1.1rem;
+        font-weight: 800;
+    }
+
+    .uoc-result-formula {
+        margin-top: 0.4rem;
+        color: #8ea4c8;
+        font-size: 0.78rem;
+    }
+
+    .uoc-list {
+        margin: 0;
+        padding-left: 1.2rem;
+    }
+
+    .uoc-table {
+        color: #ebf2ff;
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .uoc-table thead th {
+        color: #f4f8ff;
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .uoc-table td {
+        border-color: rgba(255, 255, 255, 0.08);
+        color: #ccdaef;
+    }
+
+    .uoc-callout {
+        margin-bottom: 1rem;
+        padding: 1rem 1.1rem;
+        border: 1px solid rgba(0, 163, 255, 0.22);
+        border-radius: 18px;
+        background: rgba(0, 163, 255, 0.08);
+        color: #d6ebff;
+        line-height: 1.65;
+    }
+
+    .uov-schematic-wrap {
+        width: 100%;
+        min-height: 280px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 22px;
+        background: linear-gradient(180deg, rgba(6, 11, 22, 0.82), rgba(15, 23, 42, 0.72));
+        overflow: hidden;
+    }
+
+    .uov-schematic {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .uoc-visual-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.9rem;
+        margin-top: 1rem;
+    }
+
+    .uoc-visual-kpi {
+        padding: 0.95rem 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .uoc-visual-kpi-label {
+        color: #91a7cc;
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .uoc-visual-kpi-value {
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .uoc-plot-shell {
+        min-height: 420px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 22px;
+        background: linear-gradient(180deg, rgba(6, 11, 22, 0.82), rgba(15, 23, 42, 0.72));
+        padding: 0.75rem;
+    }
+
+    .uoc-plot {
+        min-height: 360px;
+    }
+
+    .ts-wrapper.single .ts-control,
+    .ts-wrapper.single.input-active .ts-control {
+        min-height: 52px;
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 16px;
+        background: #0f172a;
+        color: #f7fbff;
+        box-shadow: none;
+        padding: 0.82rem 2.6rem 0.82rem 0.95rem;
+    }
+
+    .ts-wrapper.single .ts-control input {
+        color: #f7fbff;
+    }
+
+    .ts-wrapper.single .ts-control .item {
+        color: #f7fbff;
+    }
+
+    .ts-wrapper.single .ts-control::after {
+        border-color: #9fb7de transparent transparent transparent;
+        right: 14px;
+    }
+
+    .ts-wrapper.single.dropdown-active .ts-control {
+        border-color: rgba(0, 102, 255, 0.45);
+        box-shadow: 0 0 0 0.18rem rgba(0, 102, 255, 0.16);
+        background: #162033;
+    }
+
+    .ts-dropdown {
+        margin-top: 0.45rem;
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 16px;
+        background: #0f172a;
+        color: #f7fbff;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
+        overflow: hidden;
+    }
+
+    .ts-dropdown .option,
+    .ts-dropdown .optgroup-header,
+    .ts-dropdown .no-results,
+    .ts-dropdown .create {
+        background: #0f172a;
+        color: #f7fbff;
+    }
+
+    .ts-dropdown .active,
+    .ts-dropdown .option:hover {
+        background: rgba(0, 102, 255, 0.18);
+        color: #ffffff;
+    }
+
+    .ts-dropdown .option.selected {
+        background: rgba(0, 163, 255, 0.18);
+        color: #ffffff;
+    }
+
+    .badge-separation,
+    .badge-heat-transfer,
+    .badge-mass-transfer,
+    .badge-mechanical,
+    .badge-reaction {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.45rem 0.75rem;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .badge-separation { background: rgba(50, 168, 82, 0.16); color: #8ff0ac; border-color: rgba(50, 168, 82, 0.28); }
+    .badge-heat-transfer { background: rgba(255, 153, 0, 0.16); color: #ffca76; border-color: rgba(255, 153, 0, 0.28); }
+    .badge-mass-transfer { background: rgba(0, 163, 255, 0.16); color: #87d8ff; border-color: rgba(0, 163, 255, 0.28); }
+    .badge-mechanical { background: rgba(154, 123, 255, 0.16); color: #cab6ff; border-color: rgba(154, 123, 255, 0.28); }
+    .badge-reaction { background: rgba(255, 92, 122, 0.16); color: #ff9db1; border-color: rgba(255, 92, 122, 0.28); }
+
+    @media (max-width: 991.98px) {
+        .uoc-result-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .uoc-visual-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="uoc-shell">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="mb-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} mb-2">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <section class="uoc-hero mb-4">
+        <div class="d-flex flex-column flex-lg-row justify-content-between gap-4">
+            <div>
+                <span class="{{ operation.badge_class }}">{{ operation.category }}</span>
+                <h1 class="uoc-title">
+                    <i class="{{ operation.icon }} me-2"></i>{{ operation.name }}
+                </h1>
+                <p class="uoc-definition">{{ operation.definition }}</p>
+                <div class="uoc-meta">
+                    <span class="uoc-chip"><i class="fas fa-lightbulb"></i>{{ operation.description }}</span>
+                    <span class="uoc-chip"><i class="fas fa-briefcase"></i>{{ operation.applications }}</span>
+                </div>
+            </div>
+            <div class="d-flex align-items-start">
+                <a href="{{ url_for('unit_ops.unit_operations_index') }}" class="uoc-action">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Unit Operations
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-4">
+        <div class="col-12 col-xl-5">
+            <section class="uoc-panel h-100">
+                <div class="uoc-section-title">
+                    <i class="fas fa-sliders"></i>
+                    {% if operation.key == "psychrometric_calculator" %}
+                        Psychrometric Properties Calculator
+                    {% else %}
+                        Input Form
+                    {% endif %}
+                </div>
+
+                {% if operation.key == "psychrometric_calculator" %}
+                    <div class="uoc-callout">
+                        This calculator computes the psychrometric point numerically from two known properties, replacing manual projection on the psychrometric chart.
+                    </div>
+                {% endif %}
+
+                <form method="POST" class="row g-3">
+                    <input type="hidden" name="calculator_context" value="primary">
+                    {% for field in operation.fields %}
+                        {% set field_type = field.type or 'number' %}
+                        {% set value = form_values.get(field.name, field.default if field.default is defined else '') %}
+                        {% set col_class = 'col-12' if field_type == 'textarea' else 'col-12 col-md-6' %}
+                        <div class="{{ col_class }}">
+                            <label class="form-label uoc-form-label" for="{{ field.name }}">
+                                {{ field.label }}
+                                {% if field.required %}<span class="text-danger">*</span>{% endif %}
+                            </label>
+
+                            {% if field_type == 'select' %}
+                                <select id="{{ field.name }}" name="{{ field.name }}" class="form-select uoc-select {% if operation.key == 'psychrometric_calculator' %}js-psychrometric-select{% endif %}" {% if operation.key == 'psychrometric_calculator' %}data-psychrometric-select="true"{% endif %} {% if field.required %}required{% endif %}>
+                                    <option value="">Select an option</option>
+                                    {% for option in field.options %}
+                                        <option value="{{ option.value }}" {% if value == option.value %}selected{% endif %}>{{ option.label }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% elif field_type == 'textarea' %}
+                                <textarea id="{{ field.name }}" name="{{ field.name }}" class="form-control uoc-textarea" placeholder="{{ field.placeholder or '' }}" {% if field.required %}required{% endif %}>{{ value }}</textarea>
+                            {% else %}
+                                <input
+                                    id="{{ field.name }}"
+                                    name="{{ field.name }}"
+                                    type="number"
+                                    step="{{ field.step or 'any' }}"
+                                    class="form-control uoc-input"
+                                    value="{{ value }}"
+                                    placeholder="{{ field.placeholder or '' }}"
+                                    {% if field.required %}required{% endif %}
+                                >
+                            {% endif %}
+
+                            {% if field.unit or field.name in ['param1_value', 'param2_value'] %}
+                                <span class="uoc-form-hint" {% if field.name in ['param1_value', 'param2_value'] %}id="{{ field.name }}_hint"{% endif %}>
+                                    {% if field.unit %}Unit: {{ field.unit }}{% else %}Unit: selected parameter{% endif %}
+                                </span>
+                            {% endif %}
+                            {% if field.help %}
+                                <span class="uoc-form-hint">{{ field.help }}</span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="col-12 pt-2">
+                        <button type="submit" class="uoc-submit">
+                            <i class="fas fa-calculator"></i>
+                            CALCULATE
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </div>
+
+        <div class="col-12 col-xl-7">
+            <section class="uoc-panel h-100">
+                <div class="uoc-section-title">
+                    <i class="fas fa-diagram-project"></i>
+                    Equipment Schematic
+                </div>
+                {{ visualization.schematic_html | safe }}
+                <div class="uoc-visual-grid">
+                    {% for item in visualization.highlights %}
+                        <div class="uoc-visual-kpi">
+                            <div class="uoc-visual-kpi-label">{{ item.label }}</div>
+                            <div class="uoc-visual-kpi-value">{{ item.value }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+
+    {% if operation.slug == "sechage" and psychrometric_operation %}
+        <div class="row g-4 mt-1">
+            <div class="col-12">
+                <section class="uoc-panel">
+                    <div class="uoc-section-title">
+                        <i class="fas fa-temperature-three-quarters"></i>
+                        Psychrometric Properties Calculator
+                    </div>
+                    <div class="uoc-callout">
+                        This calculator computes the psychrometric point numerically from two known properties, replacing manual projection on the psychrometric chart.
+                    </div>
+
+                    <form method="POST" class="row g-3">
+                        <input type="hidden" name="calculator_context" value="psychrometric">
+                        {% for field in psychrometric_operation.fields %}
+                            {% set field_type = field.type or 'number' %}
+                            {% set value = psychrometric_form_values.get(field.name, field.default if field.default is defined else '') %}
+                            <div class="col-12 col-md-6">
+                                <label class="form-label uoc-form-label" for="drying_{{ field.name }}">
+                                    {{ field.label }}
+                                    {% if field.required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+
+                                {% if field_type == 'select' %}
+                                    <select id="drying_{{ field.name }}" name="{{ field.name }}" class="form-select uoc-select js-psychrometric-select" data-psychrometric-select="true" {% if field.required %}required{% endif %}>
+                                        <option value="">Select an option</option>
+                                        {% for option in field.options %}
+                                            <option value="{{ option.value }}" {% if value == option.value %}selected{% endif %}>{{ option.label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <input
+                                        id="drying_{{ field.name }}"
+                                        name="{{ field.name }}"
+                                        type="number"
+                                        step="{{ field.step or 'any' }}"
+                                        class="form-control uoc-input"
+                                        value="{{ value }}"
+                                        {% if field.required %}required{% endif %}
+                                    >
+                                {% endif %}
+
+                                {% if field.unit or field.name in ['param1_value', 'param2_value'] %}
+                                    <span class="uoc-form-hint" {% if field.name in ['param1_value', 'param2_value'] %}id="drying_{{ field.name }}_hint"{% endif %}>
+                                        {% if field.unit %}Unit: {{ field.unit }}{% else %}Unit: selected parameter{% endif %}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+
+                        <div class="col-12 pt-2">
+                            <button type="submit" class="uoc-submit">
+                                <i class="fas fa-calculator"></i>
+                                Calculate all properties
+                            </button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row g-4 mt-1">
+        <div class="col-12 col-xl-8">
+            <section class="uoc-panel">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
+                    <div class="uoc-section-title mb-0">
+                        <i class="fas fa-chart-area"></i>
+                        {{ visualization.chart_title }}
+                    </div>
+                    <span class="uoc-form-hint m-0">{{ visualization.plot_hint }}</span>
+                </div>
+                <div class="uoc-plot-shell">
+                    <div id="unitOperationPlot" class="uoc-plot" data-plot='{{ visualization.chart_json|safe }}'></div>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-12 col-xl-4">
+            <section class="uoc-panel h-100">
+                <div class="uoc-section-title">
+                    <i class="fas fa-function"></i>
+                    Formulas Used
+                </div>
+                <ol class="uoc-list">
+                    {% for formula in operation.formulas %}
+                        <li class="mb-2"><code>{{ formula }}</code></li>
+                    {% endfor %}
+                </ol>
+            </section>
+        </div>
+    </div>
+
+    {% if result %}
+        <section class="uoc-panel mt-4">
+            <div class="uoc-section-title">
+                <i class="fas fa-chart-line"></i>
+                Result
+            </div>
+
+            {% if result.error %}
+                <div class="alert alert-danger mb-0">{{ result.error }}</div>
+            {% else %}
+                {% if result.warnings %}
+                    <div class="alert alert-warning">
+                        <strong>Warnings</strong>
+                        <ul class="mb-0 mt-2">
+                            {% for warning in result.warnings %}
+                                <li>{{ warning }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                <div class="row g-4">
+                    <div class="col-12 col-lg-6">
+                        <h2 class="h5 text-light mb-3">Input Values</h2>
+                        <ul class="list-group">
+                            {% for item in result.inputs %}
+                                <li class="list-group-item bg-transparent border-secondary text-light d-flex justify-content-between gap-3">
+                                    <span>{{ item.label }}</span>
+                                    <span class="text-secondary">{{ item.value }}{% if item.unit %} {{ item.unit }}{% endif %}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                        <h2 class="h5 text-light mb-3">Calculation Steps</h2>
+                        <ol class="uoc-list">
+                            {% for step in result.steps %}
+                                <li class="mb-2">{{ step }}</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h2 class="h5 text-light mb-3">Final Results</h2>
+                    <div class="uoc-result-grid">
+                        {% for item in result.results %}
+                            <div class="uoc-result-item">
+                                <div class="uoc-result-label">{{ item.label }}</div>
+                                <div class="uoc-result-value">{{ item.value }}{% if item.unit %} {{ item.unit }}{% endif %}</div>
+                                {% if item.formula %}
+                                    <div class="uoc-result-formula">{{ item.formula }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if result.table_rows %}
+                    <div class="mt-4">
+                        <h2 class="h5 text-light mb-3">Detailed Distribution</h2>
+                        <div class="table-responsive">
+                            <table class="table uoc-table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Tamis (mm)</th>
+                                        <th>% retenu</th>
+                                        <th>% retenu cumulé</th>
+                                        <th>% passant cumulé</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in result.table_rows %}
+                                        <tr>
+                                            <td>{{ row.size }}</td>
+                                            <td>{{ row.retained_percent }}</td>
+                                            <td>{{ row.cumulative_retained }}</td>
+                                            <td>{{ row.cumulative_passing }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if result.formulas_used %}
+                    <div class="mt-4">
+                        <h2 class="h5 text-light mb-3">Formulas Applied</h2>
+                        <ul class="uoc-list">
+                            {% for formula in result.formulas_used %}
+                                <li class="mb-2"><code>{{ formula }}</code></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </section>
+    {% endif %}
+
+    {% if psychrometric_result %}
+        <section class="uoc-panel mt-4">
+            <div class="uoc-section-title">
+                <i class="fas fa-chart-line"></i>
+                Psychrometric Result
+            </div>
+
+            {% if psychrometric_result.error %}
+                <div class="alert alert-danger mb-0">{{ psychrometric_result.error }}</div>
+            {% else %}
+                {% if psychrometric_result.warnings %}
+                    <div class="alert alert-warning">
+                        <strong>Warnings</strong>
+                        <ul class="mb-0 mt-2">
+                            {% for warning in psychrometric_result.warnings %}
+                                <li>{{ warning }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                <div class="row g-4">
+                    <div class="col-12 col-lg-6">
+                        <h2 class="h5 text-light mb-3">Input Values</h2>
+                        <ul class="list-group">
+                            {% for item in psychrometric_result.inputs %}
+                                <li class="list-group-item bg-transparent border-secondary text-light d-flex justify-content-between gap-3">
+                                    <span>{{ item.label }}</span>
+                                    <span class="text-secondary">{{ item.value }}{% if item.unit %} {{ item.unit }}{% endif %}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                        <h2 class="h5 text-light mb-3">Calculation Steps</h2>
+                        <ol class="uoc-list">
+                            {% for step in psychrometric_result.steps %}
+                                <li class="mb-2">{{ step }}</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h2 class="h5 text-light mb-3">Final Results</h2>
+                    <div class="uoc-result-grid">
+                        {% for item in psychrometric_result.results %}
+                            <div class="uoc-result-item">
+                                <div class="uoc-result-label">{{ item.label }}</div>
+                                <div class="uoc-result-value">{{ item.value }}{% if item.unit %} {{ item.unit }}{% endif %}</div>
+                                {% if item.formula %}
+                                    <div class="uoc-result-formula">{{ item.formula }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if psychrometric_result.formulas_used %}
+                    <div class="mt-4">
+                        <h2 class="h5 text-light mb-3">Formulas Applied</h2>
+                        <ul class="uoc-list">
+                            {% for formula in psychrometric_result.formulas_used %}
+                                <li class="mb-2"><code>{{ formula }}</code></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </section>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const parameterMeta = {
+            Ts: "Unit: °C",
+            Th: "Unit: °C",
+            Tr: "Unit: °C",
+            HR: "Unit: %",
+            w: "Unit: kg/kg dry air",
+            w_g: "Unit: g/kg dry air",
+            h: "Unit: kJ/kg dry air",
+            Vs: "Unit: m³/kg dry air",
+            Pv: "Unit: kPa",
+            Psat: "Unit: kPa",
+            rho: "Unit: kg/m³"
+        };
+
+        function bindPsychrometricHints(prefix) {
+            const param1 = document.getElementById(prefix + "param1_type");
+            const param2 = document.getElementById(prefix + "param2_type");
+            const hint1 = document.getElementById(prefix + "param1_value_hint");
+            const hint2 = document.getElementById(prefix + "param2_value_hint");
+
+            if (!param1 || !param2 || !hint1 || !hint2) {
+                return;
+            }
+
+            function update() {
+                hint1.textContent = parameterMeta[param1.value] || "Unit: selected parameter";
+                hint2.textContent = parameterMeta[param2.value] || "Unit: selected parameter";
+            }
+
+            param1.addEventListener("change", update);
+            param2.addEventListener("change", update);
+            update();
+        }
+
+        bindPsychrometricHints("");
+        bindPsychrometricHints("drying_");
+
+        document.querySelectorAll("select[data-psychrometric-select='true']").forEach((element) => {
+            if (element.tomselect) {
+                return;
+            }
+            new TomSelect(element, {
+                create: false,
+                sortField: "text",
+                allowEmptyOption: true
+            });
+        });
+
+        const plotElement = document.getElementById("unitOperationPlot");
+        if (plotElement && plotElement.dataset.plot) {
+            const parsed = JSON.parse(plotElement.dataset.plot);
+            Plotly.newPlot(plotElement, parsed.data, parsed.layout, {
+                responsive: true,
+                displayModeBar: false
+            });
+        }
+    });
+</script>
+{% endblock %}

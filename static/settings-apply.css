@@ -1,0 +1,185 @@
+/* ================================================
+   SETTINGS-APPLY.CSS
+   Override TOUT ce qui est hardcodé dans style.css
+   Ce fichier est chargé EN DERNIER pour avoir priorité
+   ================================================ */
+
+/* ---- 1. FONT FAMILY : force sur tout le document ---- */
+html, body,
+body *, body *::before, body *::after {
+    font-family: var(--sp-font, 'Segoe UI'), Tahoma, Geneva, Verdana, sans-serif !important;
+}
+/* Exceptions : icons ne doivent pas changer de font */
+body i.fas, body i.far, body i.fab, body i.fal,
+body .fa, body [class^="fa-"], body [class*=" fa-"],
+body i.fas::before, body i.far::before, body i.fab::before, body i.fal::before,
+body .fa::before, body [class^="fa-"]::before, body [class*=" fa-"]::before {
+    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", FontAwesome !important;
+    font-weight: 900 !important;
+}
+
+body i.fab, body i.fab::before {
+    font-family: "Font Awesome 6 Brands", "Font Awesome 5 Brands" !important;
+    font-weight: 400 !important;
+}
+
+body i.far, body i.far::before {
+    font-weight: 400 !important;
+}
+
+/* ---- 2. FONT SIZE : variable CSS custom ---- */
+html { font-size: var(--sp-font-size, 15px) !important; }
+body { font-size: var(--sp-font-size, 15px) !important; }
+/* Tous les éléments héritent */
+body p, body li, body span, body div, body td, body th,
+body label, body input, body select, body textarea, body button {
+    font-size: inherit;
+}
+/* Titres : proportionnels à la taille de base */
+body h1 { font-size: calc(var(--sp-font-size, 15px) * 2.2) !important; }
+body h2 { font-size: calc(var(--sp-font-size, 15px) * 1.8) !important; }
+body h3 { font-size: calc(var(--sp-font-size, 15px) * 1.5) !important; }
+body h4 { font-size: calc(var(--sp-font-size, 15px) * 1.25) !important; }
+body h5 { font-size: calc(var(--sp-font-size, 15px) * 1.1) !important; }
+body h6 { font-size: calc(var(--sp-font-size, 15px) * 1.0) !important; }
+
+/* ---- 3. COULEUR PRINCIPALE : force partout ---- */
+
+/* Textes et liens en primary */
+body a { color: var(--primary-color) !important; }
+body .text-primary { color: var(--primary-color) !important; }
+
+/* Boutons */
+body .btn-primary,
+body button[class*="primary"] {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: #fff !important;
+}
+body .btn-outline-primary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+body .btn-outline-primary:hover {
+    background: var(--primary-color) !important;
+    color: #fff !important;
+}
+
+/* Sidebar active link */
+body .nav-link.active,
+body .sidebar .nav-link.active {
+    color: var(--primary-color) !important;
+    border-left-color: var(--primary-color) !important;
+    background: color-mix(in srgb, var(--primary-color) 10%, transparent) !important;
+}
+body .nav-link:hover { color: var(--primary-color) !important; }
+
+/* Borders / highlights */
+body .sidebar-header,
+body .sidebar::after,
+body .brand-line {
+    border-color: var(--primary-color) !important;
+    background: var(--primary-color) !important;
+}
+
+/* Progress bars, badges */
+body .progress-bar { background: var(--primary-color) !important; }
+body .badge.bg-primary { background: var(--primary-color) !important; }
+
+/* Icons in feature cards */
+body .feature-icon i,
+body .hero-icon i,
+body [class*="-icon"] > i.fa-calculator,
+body [class*="-icon"] > i.fa-sliders,
+body [class*="-icon"] > i.fa-file-pdf {
+    color: var(--primary-color) !important;
+}
+
+/* Card titles */
+body .feature-card h3,
+body .feature-card h4,
+body .summary-card h4,
+body .card-title { color: var(--primary-color) !important; }
+
+/* Gradient text — override webkit-text-fill */
+body [style*="-webkit-text-fill-color"],
+body .gradient-text {
+    -webkit-text-fill-color: var(--primary-color) !important;
+    background: var(--primary-color) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+}
+
+/* Top bar elements */
+body .topbar-title { color: var(--text-primary) !important; }
+body .top-bar { background: rgba(10,14,39,0.88) !important; }
+body.light-mode .top-bar { background: rgba(248,250,252,0.92) !important; }
+
+/* Input focus ring */
+body .form-control:focus,
+body input:focus,
+body select:focus,
+body textarea:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 20%, transparent) !important;
+}
+
+/* ---- 4. FOND D'ÉCRAN : body background ---- */
+/* Les gradients sont appliqués directement via body.style.background en JS */
+/* Ce CSS assure que html hérite aussi */
+html { background: transparent !important; }
+
+/* ---- 5. THÈMES : tous les éléments suivent --card-bg ---- */
+body .sidebar,
+body .top-bar,
+body .card,
+body .card-body,
+body .modal-content,
+body .dropdown-menu,
+body .feature-card,
+body .summary-card,
+body .info-card,
+body .result-card,
+body .dashboard-hero,
+body .theory-section,
+body .quick-actions-card,
+body .recent-activity-card,
+body .history-item,
+body .archive-item,
+body .profile-section,
+body .stat-group,
+body [class*="card"],
+body [class*="-section"],
+body [class*="-box"],
+body [class*="-panel"] {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Text hierarchy */
+body, body p, body li, body td, body span:not(.badge):not([class*="icon"]):not(i) {
+    color: var(--text-primary) !important;
+}
+body .text-muted, body small, body .small { color: var(--text-muted) !important; }
+body h1, body h2, body h3, body h4, body h5, body h6 { color: var(--text-primary) !important; }
+body .nav-link { color: var(--text-secondary) !important; }
+
+/* Inputs match theme */
+body input, body select, body textarea {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+body input::placeholder, body textarea::placeholder {
+    color: var(--text-muted) !important;
+}
+body .dropdown-item { color: var(--text-primary) !important; }
+body .dropdown-item:hover { background: color-mix(in srgb, var(--primary-color) 10%, transparent) !important; }
+
+/* ---- 6. SMOOTH TRANSITIONS ---- */
+html, body, body * {
+    transition: background-color 0.3s ease, color 0.2s ease,
+                border-color 0.2s ease, font-family 0s !important;
+}
+body i, body input, body button { transition: none !important; }

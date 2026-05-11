@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-panel shadow-soft maxw-760">
+        <div class="auth-header">
+            <span class="eyebrow">New account</span>
+            <h1>Create your workspace</h1>
+            <p class="text-muted">Complete the form to sign up and unlock the solver dashboard.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="mb-4">
+            {% for category, msg in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('auth.signup') }}" method="post" id="signupAccountForm" class="auth-form">
+
+            <div class="grid-2 gap-20 mb-4">
+                <div class="form-group">
+                    <label for="first_name">First name</label>
+                    <input type="text" id="first_name" name="first_name" class="form-control" value="{{ request.form.get('first_name', '') }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last name</label>
+                    <input type="text" id="last_name" name="last_name" class="form-control" value="{{ request.form.get('last_name', '') }}" required>
+                </div>
+            </div>
+
+            <div class="form-group mb-4">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control" value="{{ request.form.get('username', '') }}" required>
+            </div>
+
+            <div class="form-group mb-4">
+                <label for="phone">Phone (WhatsApp - optional)</label>
+                <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    class="form-control{% if phone_error %} is-invalid{% endif %}"
+                    value="{{ request.form.get('phone', '') }}"
+                    placeholder="+212612345678"
+                    inputmode="tel"
+                    autocomplete="tel"
+                    pattern="(?:\+212[67]\d{8}|0[67]\d{8})"
+                    aria-describedby="phoneHelp phoneError"
+                >
+                <small id="phoneHelp" class="text-muted">Format accepte: +212612345678 ou 0612345678.</small>
+                <div id="phoneError" class="form-feedback">{{ phone_error or '' }}</div>
+            </div>
+
+            <div class="grid-2 gap-20 mb-4">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="form-control"
+                        value="{{ request.form.get('email', '') }}"
+                        required
+                        autocomplete="off"
+                        oncopy="return false"
+                        onpaste="return false"
+                        oncut="return false"
+                        ondrag="return false"
+                        ondrop="return false"
+                    >
+                </div>
+                <div class="form-group">
+                    <label for="confirm_email">Confirm email</label>
+                    <input
+                        type="email"
+                        id="confirm_email"
+                        name="confirm_email"
+                        class="form-control"
+                        value="{{ request.form.get('confirm_email', '') }}"
+                        required
+                        autocomplete="off"
+                        oncopy="return false"
+                        onpaste="return false"
+                        oncut="return false"
+                        ondrag="return false"
+                        ondrop="return false"
+                    >
+                    <small class="text-muted">Veuillez saisir manuellement ce champ.</small>
+                </div>
+            </div>
+
+            <div class="grid-2 gap-20 mb-4">
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="form-control"
+                        required
+                        autocomplete="new-password"
+                        oncopy="return false"
+                        onpaste="return false"
+                        oncut="return false"
+                        ondrag="return false"
+                        ondrop="return false"
+                    >
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm password</label>
+                    <input
+                        type="password"
+                        id="confirm_password"
+                        name="confirm_password"
+                        class="form-control"
+                        required
+                        autocomplete="new-password"
+                        oncopy="return false"
+                        onpaste="return false"
+                        oncut="return false"
+                        ondrag="return false"
+                        ondrop="return false"
+                    >
+                    <small class="text-muted">Veuillez saisir manuellement ce champ.</small>
+                </div>
+            </div>
+
+            <div class="auth-form-footer gap-20">
+                <button type="submit" class="btn btn-primary w-100">Create account</button>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary w-100">Back to login</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('signupAccountForm');
+        if (!form) return;
+
+        const phoneInput = document.getElementById('phone');
+        const phoneError = document.getElementById('phoneError');
+        const phonePattern = /^(?:\+212[67]\d{8}|0[67]\d{8})$/;
+        const phoneMessage = 'Veuillez entrer un num\u00e9ro marocain valide: +2126XXXXXXXX ou 06XXXXXXXX';
+
+        if (!phoneInput || !phoneError) {
+            return;
+        }
+
+        function normalizePhoneValue(value) {
+            const cleanedValue = value.replace(/[\s-]+/g, '');
+
+            if (!cleanedValue) {
+                return '';
+            }
+
+            if (/^0[67]\d{8}$/.test(cleanedValue)) {
+                return `+212${cleanedValue.slice(1)}`;
+            }
+
+            return cleanedValue;
+        }
+
+        function setPhoneState(isValid, message) {
+            phoneError.textContent = message || '';
+            phoneInput.classList.toggle('is-invalid', !isValid && !!phoneInput.value.trim());
+            phoneInput.classList.toggle('is-valid', isValid && !!phoneInput.value.trim());
+            phoneInput.setCustomValidity(isValid ? '' : phoneMessage);
+        }
+
+        function validatePhoneField(normalizeOnSuccess) {
+            const rawValue = phoneInput.value.trim();
+
+            if (!rawValue) {
+                setPhoneState(true, '');
+                return true;
+            }
+
+            const normalizedValue = normalizePhoneValue(rawValue);
+            const isValid = phonePattern.test(normalizedValue);
+
+            if (!isValid) {
+                setPhoneState(false, phoneMessage);
+                return false;
+            }
+
+            if (normalizeOnSuccess) {
+                phoneInput.value = normalizedValue;
+            }
+
+            setPhoneState(true, '');
+            return true;
+        }
+
+        phoneInput.addEventListener('input', function() {
+            const rawValue = phoneInput.value.trim();
+
+            if (!rawValue) {
+                setPhoneState(true, '');
+                return;
+            }
+
+            const normalizedPreview = normalizePhoneValue(rawValue);
+            if (phonePattern.test(normalizedPreview)) {
+                setPhoneState(true, '');
+            } else {
+                phoneInput.classList.remove('is-valid');
+                phoneInput.classList.remove('is-invalid');
+                phoneInput.setCustomValidity('');
+            }
+        });
+
+        phoneInput.addEventListener('blur', function() {
+            validatePhoneField(true);
+        });
+
+        form.addEventListener('submit', function(event) {
+            if (!validatePhoneField(true)) {
+                event.preventDefault();
+                phoneInput.focus();
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+    <div class="card mx-auto shadow-sm" style="max-width: 520px;">
+        <div class="card-body p-4">
+            <h3 class="card-title mb-2">Resend Verification Code</h3>
+            <p class="text-muted mb-4">Enter your email address and we will send a new 6-digit verification code.</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="mb-4">
+                {% for category, msg in messages %}
+                <div class="alert alert-{{ category }}" role="alert">{{ msg }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('auth.resend_verification', email=email) }}" method="post">
+                <div class="mb-4">
+                    <label for="email" class="form-label">Email</label>
+                    <input
+                        type="email"
+                        class="form-control"
+                        id="email"
+                        name="email"
+                        value="{{ request.form.get('email', email or '') }}"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+                <div class="d-grid gap-2 d-sm-flex">
+                    <button type="submit" class="btn btn-primary">Send new code</button>
+                    <a href="{{ url_for('auth.verify', email=email) }}" class="btn btn-outline-secondary">Go to verify</a>
+                </div>
+            </form>
+
+            <div class="mt-4">
+                <a href="{{ url_for('auth.login') }}">Back to login</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

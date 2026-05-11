@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div class="results-header mb-5">
+    <div>
+        <h2 class="results-title">
+            <i class="fas fa-chart-line me-2" style="color: #0066FF;"></i>Calculation Results
+        </h2>
+        <p style="color: #a8b5c8; font-size: 14px; margin-top: 8px;">
+            {% if process_type == 'desorption' %}
+            {{ mode | capitalize }} Desorption Analysis
+            {% else %}
+            McCabe-Thiele analysis for {{ mode | capitalize }} flow absorption
+            {% endif %}
+        </p>
+    </div>
+
+<div class="results-actions">
+    <a href="{{ url_for('api.download_report', y0=y0, x0=x0, ytarget=ytarget, G=G, L=L, m=m, mode=mode, stages=stages, ratio=ratio) }}"
+       class="btn btn-primary">
+        <i class="fas fa-file-pdf me-2"></i>PDF Report
+    </a>
+    <button class="btn btn-info" onclick="downloadCSV()">
+        <i class="fas fa-file-csv me-2"></i>CSV Data
+    </button>
+    <button class="btn btn-success" onclick="downloadPNG()">
+        <i class="fas fa-image me-2"></i>Export Graph
+    </button>
+</div>
+
+</div>
+
+<!-- KEY METRICS SECTION -->
+
+{% if computation_time is defined and memory_used is defined %}
+<div class="top-metric-grid mb-4" style="display:flex;gap:1rem;padding:1rem;border:2px solid #00bfff;border-radius:10px;background:rgba(0, 190, 255, 0.06);">
+    <div class="stat-card" style="flex: 0 0 auto; min-width: 210px;">
+        <div class="stat-label">
+            <i class="fas fa-clock me-2" style="color: #FFA500;"></i>Computation Time
+        </div>
+        <div class="stat-value">{{ computation_time }} s</div>
+    </div>
+
+    <div class="stat-card" style="flex: 0 0 auto; min-width: 210px;">
+        <div class="stat-label">
+            <i class="fas fa-memory me-2" style="color: #FFA500;"></i>Memory Used
+        </div>
+        <div class="stat-value">{{ memory_used }} {{ memory_unit }}</div>
+    </div>
+</div>
+{% endif %}
+
+<div class="metric-grid mb-5">
+
+<div class="stat-card">
+    <div class="stat-label">
+        <i class="fas fa-layer-group me-2" style="color: #0066FF;"></i>Theoretical Stages
+    </div>
+    <div class="stat-value">{{ stages }}</div>
+</div>
+
+{% if process_type == 'desorption' %}
+<div class="stat-card">
+    <div class="stat-label"><i class="fas fa-stream me-2" style="color: #00D9FF;"></i>Flow Mode</div>
+    <div class="stat-value">{{ mode | capitalize }}</div>
+</div>
+<div class="stat-card">
+    <div class="stat-label"><i class="fas fa-wind me-2" style="color: #00D9FF;"></i>Stripping Factor S</div>
+    <div class="stat-value">{{ "%.3f"|format(S) }}</div>
+</div>
+<div class="stat-card">
+    <div class="stat-label"><i class="fas fa-water me-2" style="color: #00D9FF;"></i>Gas per Stage (Gi)</div>
+    <div class="stat-value">{{ "%.2f"|format(Gi) }}</div>
+</div>
+<div class="stat-card">
+    <div class="stat-label"><i class="fas fa-sign-in-alt me-2" style="color: #10b981;"></i>Inlet x₀</div>
+    <div class="stat-value">{{ "%.4f"|format(x0) }}</div>
+</div>
+<div class="stat-card">
+    <div class="stat-label"><i class="fas fa-sign-out-alt me-2" style="color: #ff6b6b;"></i>Final outlet x</div>
+    <div class="stat-value">{{ "%.6f"|format(final_x) }}</div>
+</div>
+{% else %}
+<div class="stat-card">
+    <div class="stat-label">
+        <i class="fas fa-droplet me-2" style="color: #00D9FF;"></i>Flow Ratio (L'/G')
+    </div>
+    <div class="stat-value">{{ "%.3f"|format(ratio) }}</div>
+</div>
+
+<div class="stat-card">
+    <div class="stat-label">
+        <i class="fas fa-exit me-2" style="color: #00D9FF;"></i>Inlet Composition y0
+    </div>
+    <div class="stat-value">{{ "%.4f"|format(y0) }}</div>
+</div>
+
+<div class="stat-card">
+    <div class="stat-label">
+        <i class="fas fa-water me-2" style="color: #00D9FF;"></i>Inlet Composition x0
+    </div>
+    <div class="stat-value">{{ "%.4f"|format(x0) }}</div>
+</div>
+
+<div class="stat-card">
+    <div class="stat-label">
+        <i class="fas fa-sign-in-alt me-2" style="color: #10b981;"></i>Target Outlet
+    </div>
+    <div class="stat-value">{{ "%.4f"|format(ytarget) }}</div>
+</div>
+
+<!-- NEW CARD -->
+<div class="stat-card">
+    <div class="stat-label">
+        <i class="fas fa-percent me-2" style="color:#ff6b6b;"></i>Taux d'absorption
+    </div>
+    <div class="stat-value">
+        {{ "%.2f"|format(absorption_rate) }} %
+    </div>
+</div>
+{% endif %}
+
+    </div>
+
+{% if process_type == 'desorption' %}
+<div class="results-graph-grid mb-4">
+    <div id="graph_x" class="plotly-graph"></div>
+    <div id="graph_y" class="plotly-graph"></div>
+</div>
+{% else %}
+<div class="results-graph-card mb-4">
+    <div id="graph" class="plotly-graph"></div>
+</div>
+{% endif %}
+
+{% if process_type == 'absorption' %}
+<div class="card mb-4">
+    <div class="card-header bg-transparent border-bottom border-info">
+        <h5 class="mb-0"><i class="fas fa-image me-2" style="color: #0066FF;"></i>Graph Matplotlib</h5>
+    </div>
+    <div class="card-body text-center">
+        <img src="{{ url_for('static', filename='mccabe.png') }}" class="img-fluid" alt="McCabe-Thiele Matplotlib">
+    </div>
+</div>
+
+<!-- SENSITIVITY GRAPH -->
+
+<div class="card mb-5 border-0">
+    <div class="card-header bg-transparent border-bottom border-info">
+        <h5 class="mb-0">
+            <i class="fas fa-sliders-h me-2" style="color: #FF6B6B;"></i>Sensitivity Analysis
+        </h5>
+    </div>
+
+<div class="card-body">
+
+    <div id="sensitivityGraph" class="plotly-graph" style="min-height:420px;"></div>
+
+    <div style="margin-top:15px;">
+        <strong>Estimated Stages:</strong>
+        <span id="dynamicStageCount">{{ stages }}</span>
+    </div>
+
+</div>
+
+</div>
+{% endif %}
+
+<!-- STEP BY STEP -->
+
+{% if show_steps and stage_details %}
+
+<div class="card mb-5 border-0">
+    <div class="card-header bg-transparent border-bottom border-info">
+        <h5 class="mb-0">
+            <i class="fas fa-list-ol me-2" style="color: #FF6B6B;"></i>Step-by-Step Calculation
+        </h5>
+    </div>
+
+<div class="card-body">
+
+    {% for step in stage_details %}
+
+    <div style="margin-bottom:10px;">
+        <strong>Stage {{ step.stage }}</strong>
+
+        {% if step.comment %}
+        <p>{{ step.comment }}</p>
+        {% endif %}
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+</div>
+{% endif %}
+
+<!-- TABLE -->
+
+<div class="card border-0">
+    <div class="card-header bg-transparent border-bottom border-info">
+        <h5 class="mb-0">
+            <i class="fas fa-table me-2" style="color: #FF6B6B;"></i>Stage Coordinates
+        </h5>
+    </div>
+
+<div class="card-body">
+
+    <table class="table table-hover">
+
+        <thead>
+            <tr>
+                <th>Point</th>
+                <th>X</th>
+                <th>Y</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for row in table %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ "%.5f"|format(row[1]) }}</td>
+                <td>{{ "%.5f"|format(row[2]) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+</div>
+
+</div>
+
+<!-- SCRIPTS -->
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<script>
+
+var processType = '{{ process_type }}';
+
+if (processType === 'desorption') {
+    var graphX = JSON.parse('{{ graphJSON_x | safe }}');
+    var graphY = JSON.parse('{{ graphJSON_y | safe }}');
+    Plotly.newPlot('graph_x', graphX.data, graphX.layout);
+    Plotly.newPlot('graph_y', graphY.data, graphY.layout);
+} else {
+    var graphs = JSON.parse('{{ graphJSON | safe }}');
+    Plotly.newPlot('graph', graphs.data, graphs.layout);
+}
+
+{% if process_type == 'absorption' %}
+var sensitivity = JSON.parse('{{ stage_sens_JSON | safe }}');
+Plotly.newPlot("sensitivityGraph", sensitivity.data, sensitivity.layout);
+{% endif %}
+
+function downloadCSV(){
+
+let csv = "point,x,y\n";
+
+{% for row in table %}
+csv += "{{ row[0] }},{{ '%.5f'|format(row[1]) }},{{ '%.5f'|format(row[2]) }}\n";
+{% endfor %}
+
+const blob = new Blob([csv],{type:'text/csv'});
+
+const url = window.URL.createObjectURL(blob);
+
+const a = document.createElement("a");
+
+a.href = url;
+a.download = "mccabe_thiele_data.csv";
+
+a.click();
+
+}
+
+function downloadPNG(){
+    var targetId = (processType === 'desorption') ? 'graph_x' : 'graph';
+    Plotly.toImage(
+    document.getElementById(targetId),
+    {format:"png", width:1200, height:700}
+    
+    ).then(function(dataUrl){
+    
+    const a = document.createElement("a");
+    
+    a.href = dataUrl;
+    a.download = "mccabe_thiele_diagram.png";
+    
+    a.click();
+    
+    });
+}
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Bienvenue {{ name }} ({{ username }})</h2>
+            <p>Utilisez les calculateurs dans <a href="{{ url_for('main.quick_solver') }}">Quick Solver</a>.</p>
+            <form method="post" enctype="multipart/form-data" class="mb-4">
+                <div class="mb-3">
+                    <label for="graph_image" class="form-label">Importer un graphique (image)</label>
+                    <input type="file" class="form-control" id="graph_image" name="graph_image" accept="image/*" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Téléverser</button>
+            </form>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for cat, msg in messages %}
+                <div class="alert alert-{{ cat }}">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <h4>Images téléversées</h4>
+            <div class="row">
+                {% if images %}
+                    {% for img in images %}
+                    <div class="col-md-4 mb-3"><img src="{{ img }}" class="img-fluid border" alt="graph"></div>
+                    {% endfor %}
+                {% else %}
+                    <p>Aucune image pour l'instant.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Compte</h5>
+                    <p>{{ name }}</p>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Déconnexion</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

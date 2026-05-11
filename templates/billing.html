@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="mb-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <span class="badge bg-info bg-opacity-10 text-info mb-2">Premium Access</span>
+            <h1 class="display-6">Choose your plan</h1>
+            <p class="text-muted">Subscribe with PayPal to unlock premium features and extended access to the Gas Absorption Analysis platform.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('main.home') }}" class="btn btn-outline-light">
+                <i class="fas fa-arrow-left me-2"></i>Back to Home
+            </a>
+        </div>
+    </div>
+
+    {% if not paypal_configured %}
+    <div class="alert alert-warning">
+        PayPal is not configured yet. Please set <strong>PAYPAL_CLIENT_ID</strong>, <strong>PAYPAL_PLAN_ID_MONTHLY</strong>, and <strong>PAYPAL_PLAN_ID_YEARLY</strong> in the environment before using subscriptions.
+    </div>
+    {% endif %}
+
+    <div class="row gy-4">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <h5 class="card-title">Monthly Plan</h5>
+                            <p class="text-muted mb-0">Billed every month</p>
+                        </div>
+                        <span class="badge bg-primary">$19.99</span>
+                    </div>
+                    <p class="text-muted">Perfect for short-term access and hands-on analysis.</p>
+                    <button id="monthly-subscribe-btn" class="btn btn-primary btn-lg w-100" onclick="subscribeMonthly()" style="font-weight: 600; padding: 12px;" {% if not paypal_configured %}disabled{% endif %}>
+                        <i class="fas fa-credit-card me-2"></i>Subscribe Now
+                    </button>
+                    <div id="paypal-button-container-monthly" class="mt-3" style="min-height: 60px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <h5 class="card-title">Annual Plan</h5>
+                            <p class="text-muted mb-0">Billed once per year</p>
+                        </div>
+                        <span class="badge bg-success">$59.99</span>
+                    </div>
+                    <p class="text-muted">Best value for regular users and students.</p>
+                    <button id="yearly-subscribe-btn" class="btn btn-success btn-lg w-100" onclick="subscribeYearly()" style="font-weight: 600; padding: 12px;" {% if not paypal_configured %}disabled{% endif %}>
+                        <i class="fas fa-credit-card me-2"></i>Subscribe Now
+                    </button>
+                    <div id="paypal-button-container-yearly" class="mt-3" style="min-height: 60px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block page_scripts %}
+<script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&vault=true&intent=subscription"></script>
+<script>
+    function renderPaypalButton(containerId, planId, approveUrl, buttonId, style, otherContainerId) {
+        var container = document.querySelector(containerId);
+        var otherContainer = document.querySelector(otherContainerId);
+        
+        // Clear both containers
+        if (container) container.innerHTML = '';
+        if (otherContainer) otherContainer.innerHTML = '';
+
+        if (!window.paypal) { alert('PayPal SDK is still loading, please wait a moment.'); return; }
+        if (!planId) { alert('Subscription plan is not configured.'); return; }
+
+        window.paypal.Buttons({
+            style: style,
+            createSubscription: function(data, actions) {
+                return actions.subscription.create({ 'plan_id': planId });
+            },
+            onApprove: function(data) {
+                window.location.href = approveUrl + '&subscription_id=' + data.subscriptionID;
+            },
+            onError: function(err) {
+                alert('PayPal error: ' + (err.message || err));
+            }
+        }).render(containerId).catch(function(err) {
+            alert('PayPal render failed: ' + (err.message || err));
+        });
+    }
+
+    function subscribeMonthly() {
+        renderPaypalButton(
+            '#paypal-button-container-monthly',
+            "{{ monthly_plan_id }}",
+            "{{ url_for('main.billing_success') }}?plan=monthly",
+            'monthly-subscribe-btn',
+            { layout: 'vertical', color: 'blue', shape: 'rect', label: 'subscribe' },
+            '#paypal-button-container-yearly'
+        );
+    }
+
+    function subscribeYearly() {
+        renderPaypalButton(
+            '#paypal-button-container-yearly',
+            "{{ yearly_plan_id }}",
+            "{{ url_for('main.billing_success') }}?plan=yearly",
+            'yearly-subscribe-btn',
+            { layout: 'vertical', color: 'gold', shape: 'rect', label: 'subscribe' },
+            '#paypal-button-container-monthly'
+        );
+    }
+</script>
+        );
+    }
+</script>
+{% endblock %}

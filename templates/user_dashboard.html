@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-page">
+    <div class="page-header modern-header">
+        <div>
+            <p class="eyebrow">Good to see you again</p>
+            <h1>Welcome back, {{ name.split(' ')[0] if name else username|capitalize }}</h1>
+            <p class="page-subtitle">Your control center for calculations, uploads, and activity tracking.</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('main.calculate') }}" class="btn btn-primary">
+                <i class="fas fa-play-circle"></i> New Calculation
+            </a>
+            <a href="{{ url_for('main.theory') }}" class="btn btn-outline-light">
+                <i class="fas fa-book"></i> Theory
+            </a>
+            <a href="{{ url_for('profile.view_profile') }}" class="btn btn-outline-light">
+                <i class="fas fa-user"></i> Profile
+            </a>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="alerts-row">
+        {% for category, msg in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <section class="cards-grid mb-4">
+        {% set total_calculations = images|length %}
+        {% set is_verified = session.get('verified', false) %}
+        {% set user_role = session.get('role', 'User') %}
+
+        <article class="stats-card">
+            <div class="stats-card-icon bg-primary">
+                <i class="fas fa-calculator"></i>
+            </div>
+            <div>
+                <p class="stats-card-label">Calculations</p>
+                <h2>{{ total_calculations }}</h2>
+                <p class="stats-card-note">Recent uploads and activity.</p>
+            </div>
+        </article>
+        <article class="stats-card">
+            <div class="stats-card-icon bg-accent">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div>
+                <p class="stats-card-label">Last action</p>
+                <h2>{{ 'Upload' if total_calculations > 0 else 'None yet' }}</h2>
+                <p class="stats-card-note">Upload graphs to continue.</p>
+            </div>
+        </article>
+        <article class="stats-card">
+            <div class="stats-card-icon bg-success">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <div>
+                <p class="stats-card-label">Account status</p>
+                <h2>{{ 'Verified' if is_verified else 'Pending' }}</h2>
+                <p class="stats-card-note">Your account verification status.</p>
+            </div>
+        </article>
+        <article class="stats-card">
+            <div class="stats-card-icon bg-info">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div>
+                <p class="stats-card-label">Role</p>
+                <h2>{{ user_role|capitalize }}</h2>
+                <p class="stats-card-note">Access privileges in the app.</p>
+            </div>
+        </article>
+    </section>
+
+    <div class="dashboard-grid">
+        <main class="dashboard-main">
+            <section class="panel card panel-shadow">
+                <div class="panel-header">
+                    <div>
+                        <h3>Upload a graph</h3>
+                        <p class="text-muted">Upload chart images directly to your workspace.</p>
+                    </div>
+                    <span class="badge badge-accent">Recommended</span>
+                </div>
+                <div class="panel-body">
+                    <form method="post" enctype="multipart/form-data" class="upload-area">
+                        <label class="file-dropzone" for="graph_image">
+                            <div class="dropzone-icon">
+                                <i class="fas fa-upload"></i>
+                            </div>
+                            <div>
+                                <h4>Drop your image here</h4>
+                                <p>PNG, JPG, JPEG, GIF</p>
+                            </div>
+                            <input type="file" id="graph_image" name="graph_image" accept="image/*" required>
+                        </label>
+                        <div class="upload-actions">
+                            <button type="submit" class="btn btn-primary">Upload Image</button>
+                            <a href="{{ url_for('main.calculate') }}" class="btn btn-outline-light">Open Solver</a>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <section class="panel card panel-shadow">
+                <div class="panel-header">
+                    <div>
+                        <h3>Recent activity</h3>
+                        <p class="text-muted">Review your latest uploads and actions.</p>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    {% if images %}
+                    <div class="activity-list">
+                        {% for img in images[-4:] %}
+                        <article class="activity-item">
+                            <div class="activity-dot"></div>
+                            <div>
+                                <p class="activity-title">Uploaded image</p>
+                                <p class="activity-meta">{{ img.split('/')[-1] }}</p>
+                            </div>
+                            <span class="badge bg-secondary">Image</span>
+                        </article>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-card">
+                        <div class="empty-icon">
+                            <i class="fas fa-inbox"></i>
+                        </div>
+                        <h4>No activity yet</h4>
+                        <p>Upload your first graph or start a calculation now.</p>
+                        <a href="{{ url_for('main.calculate') }}" class="btn btn-primary">Start analysis</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+        </main>
+
+        <aside class="dashboard-sidebar-panel">
+            <section class="panel card panel-shadow user-overview-card">
+                <div class="panel-header account-header">
+                    <div class="account-info">
+                        <span class="account-label">Account</span>
+                        <h3 class="account-name">{{ name or username|capitalize }}</h3>
+                        <p class="account-username">@{{ username }}</p>
+                    </div>
+                    <div class="account-avatar-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                </div>
+                <div class="panel-body user-overview-body">
+                    <div class="badge-row account-badges">
+                        <span class="badge bg-info">{{ user_role|capitalize }}</span>
+                        <span class="badge bg-success">{{ 'Verified' if is_verified else 'Pending' }}</span>
+                    </div>
+                    <nav class="account-actions">
+                        <a href="{{ url_for('main.calculate') }}" class="action-item">
+                            <i class="fas fa-play"></i>
+                            <span>New calculation</span>
+                        </a>
+                        <a href="{{ url_for('main.theory') }}" class="action-item">
+                            <i class="fas fa-book-open"></i>
+                            <span>Review theory</span>
+                        </a>
+                        <a href="{{ url_for('profile.view_profile') }}" class="action-item">
+                            <i class="fas fa-user-cog"></i>
+                            <span>Edit profile</span>
+                        </a>
+                        <a href="{{ url_for('main.historique') }}" class="action-item">
+                            <i class="fas fa-history"></i>
+                            <span>View history</span>
+                        </a>
+                    </nav>
+                </div>
+            </section>
+
+            <section class="panel card panel-shadow quick-links-card">
+                <div class="panel-header">
+                    <h3>Quick actions</h3>
+                </div>
+                <div class="panel-body quick-actions-body">
+                    <a href="{{ url_for('main.quick_solver') }}" class="quick-action-item">
+                        <i class="fas fa-rocket"></i>
+                        <span>Quick Solver</span>
+                        <i class="fas fa-arrow-right quick-action-arrow"></i>
+                    </a>
+                    <a href="{{ url_for('main.theory') }}" class="quick-action-item">
+                        <i class="fas fa-book"></i>
+                        <span>Theory</span>
+                        <i class="fas fa-arrow-right quick-action-arrow"></i>
+                    </a>
+                    <a href="{{ url_for('profile.view_profile') }}" class="quick-action-item">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                        <i class="fas fa-arrow-right quick-action-arrow"></i>
+                    </a>
+                    <a href="{{ url_for('main.about') }}" class="quick-action-item">
+                        <i class="fas fa-info-circle"></i>
+                        <span>About</span>
+                        <i class="fas fa-arrow-right quick-action-arrow"></i>
+                    </a>
+                </div>
+            </section>
+        </aside>
+    </div>
+</div>
+{% endblock %}

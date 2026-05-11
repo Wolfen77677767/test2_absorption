@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0e27">
+    <title>Gas Absorption Solver</title>
+
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <!-- Modern SaaS Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicon and application icon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/icon.png') }}?v=1">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/icon.png') }}?v=1">
+    
+    <!-- Theme Variables (must be before style.css) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='themes.css') }}">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css', v='20260507-global-modal-fix') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='settings-panel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='settings-apply.css') }}">
+    <style>
+        body {
+            background: var(--bg-color);
+        }
+
+        .wrapper {
+            overflow: visible;
+        }
+
+        .main-content {
+            overflow: visible;
+            background: var(--bg-color);
+        }
+
+        .page-content {
+            overflow: visible;
+            background: transparent;
+        }
+
+        .top-bar {
+            position: relative;
+            z-index: 1200;
+            overflow: visible;
+        }
+
+        .topbar-actions {
+            position: relative;
+            overflow: visible;
+        }
+
+        .topbar-user-dropdown {
+            position: relative;
+            z-index: 1300;
+        }
+
+        .topbar-user-trigger {
+            min-width: 0;
+            padding: 7px 10px 7px 9px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.03) 100%);
+            color: var(--text-primary);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+            transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease, background 0.24s ease;
+        }
+
+        .topbar-user-trigger:hover,
+        .topbar-user-trigger:focus,
+        .topbar-user-trigger.show {
+            color: var(--text-primary);
+            border-color: rgba(0, 102, 255, 0.4);
+            background: linear-gradient(180deg, rgba(0, 102, 255, 0.16) 0%, rgba(0, 217, 255, 0.08) 100%);
+            box-shadow: 0 22px 42px rgba(0, 0, 0, 0.24);
+            transform: translateY(-1px);
+        }
+
+        .topbar-user-trigger::after {
+            margin-left: 4px;
+            border-top-color: currentColor;
+            opacity: 0.75;
+        }
+
+        .billing-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: transform 0.24s ease, border-color 0.24s ease, background 0.24s ease;
+        }
+
+        .billing-link:hover,
+        .billing-link:focus {
+            background: rgba(0, 102, 255, 0.14);
+            border-color: rgba(0, 102, 255, 0.4);
+            transform: translateY(-1px);
+            color: var(--text-primary);
+        }
+
+        .topbar-user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.9) 0%, rgba(0, 217, 255, 0.9) 100%);
+            color: #fff;
+            font-size: 16px;
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25);
+            flex-shrink: 0;
+        }
+
+        .topbar-user-meta {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+
+        .topbar-user-label {
+            font-size: 9px;
+            line-height: 1;
+            color: var(--text-secondary);
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        .topbar-user-name {
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .topbar-user-menu.dropdown-menu {
+            display: block;
+            min-width: min(244px, calc(100vw - 32px));
+            max-width: calc(100vw - 32px);
+            margin-top: 0;
+            padding: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(28, 37, 67, 0.98) 0%, rgba(18, 24, 47, 0.98) 100%);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.34), 0 0 0 1px rgba(0, 102, 255, 0.08);
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(12px) scale(0.98);
+            transform-origin: top right;
+            transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s ease;
+            inset: calc(100% + 12px) 0 auto auto !important;
+            z-index: 1400;
+        }
+
+        .topbar-user-menu.dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0) scale(1);
+        }
+
+        .topbar-user-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            color: var(--text-primary);
+            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+
+        .topbar-user-item:hover,
+        .topbar-user-item:focus {
+            color: var(--text-primary);
+            background: rgba(0, 102, 255, 0.14);
+            transform: translateX(4px);
+        }
+
+        .topbar-user-item.logout-item:hover,
+        .topbar-user-item.logout-item:focus {
+            background: rgba(255, 107, 107, 0.14);
+            color: #ffd5d5;
+        }
+
+        .topbar-user-item-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--secondary-color);
+            flex-shrink: 0;
+        }
+
+        .topbar-user-item.logout-item .topbar-user-item-icon {
+            color: #ff8d8d;
+        }
+
+        .topbar-user-item-label {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+        }
+
+        .topbar-user-menu .dropdown-divider {
+            margin: 8px 4px;
+            border-top-color: rgba(255, 255, 255, 0.08);
+        }
+
+        @media (max-width: 768px) {
+            .topbar-user-trigger {
+                padding: 7px 9px;
+                gap: 8px;
+            }
+
+            .topbar-user-name {
+                max-width: 108px;
+            }
+
+            .topbar-user-menu.dropdown-menu {
+                min-width: min(224px, calc(100vw - 24px));
+                max-width: calc(100vw - 24px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .topbar-user-label {
+                display: none;
+            }
+
+            .topbar-user-name {
+                max-width: 82px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body class="dark-mode">
+    <script>window.isLoggedIn = {{ 'true' if session.get('user') else 'false' }};</script>
+    <script>
+        // Apply saved theme immediately to prevent flash
+        (async () => {
+            let savedTheme = null;
+            try {
+                const uiSettings = localStorage.getItem('app-ui-settings');
+                if (uiSettings) {
+                    const settings = JSON.parse(uiSettings);
+                    savedTheme = settings.theme;
+                }
+            } catch (e) {}
+            if (!savedTheme) {
+                savedTheme = localStorage.getItem('app-theme');
+            }
+            // For logged in users, check server settings
+            if (window.isLoggedIn && !savedTheme) {
+                try {
+                    const r = await fetch('/settings/get');
+                    if (r.ok) {
+                        const data = await r.json();
+                        if (data.success && data.settings && data.settings.theme) {
+                            savedTheme = data.settings.theme;
+                        }
+                    }
+                } catch (e) {}
+            }
+            if (savedTheme && ['dark-mode', 'light-mode', 'theme-ocean', 'theme-forest', 'theme-sunset', 'theme-purple', 'theme-rose', 'theme-slate', 'theme-teal', 'theme-amber', 'theme-cyber', 'theme-matrix', 'theme-neon', 'theme-mint', 'theme-sky', 'theme-peach', 'theme-lavender'].includes(savedTheme)) {
+                document.body.classList.remove('dark-mode', 'light-mode');
+                if (savedTheme === 'light-mode') {
+                    document.body.classList.add('light-mode');
+                } else {
+                    document.body.classList.add('dark-mode', savedTheme);
+                }
+            }
+        })();
+    </script>
+    <div class="animated-bg">
+        <video autoplay muted loop playsinline class="bg-video bg-dark">
+            <source src="{{ url_for('static', filename='videos/bg-dark.mp4') }}" type="video/mp4">
+        </video>
+        <video autoplay muted loop playsinline class="bg-video bg-light">
+            <source src="{{ url_for('static', filename='videos/bg-light.mp4') }}" type="video/mp4">
+        </video>
+        <div class="bg-overlay"></div>
+    </div>
+
+    <div class="app-wrapper">
+    {% set is_logged_in = session.get('user') %}
+    {% set current_role = session.get('role', 'user') %}
+    {% if is_logged_in and current_role in ['admin', 'super_admin'] %}
+        {% set dashboard_url = url_for('admin.admin_dashboard') %}
+    {% elif is_logged_in %}
+        {% set dashboard_url = url_for('main.user_dashboard') %}
+    {% else %}
+        {% set dashboard_url = None %}
+    {% endif %}
+    <div class="wrapper">
+        <!-- SIDEBAR NAVIGATION -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <a href="{{ url_for('main.home') }}" class="sidebar-brand-horizontal">
+                    <img src="{{ url_for('static', filename='images/icon.png') }}" alt="AOAF Icon" class="sidebar-brand-icon">
+                    <span class="sidebar-brand-copy">
+                        <span class="sidebar-brand-name">AOAF</span>
+                        <span class="sidebar-brand-tagline">Simulation Lab</span>
+                    </span>
+                </a>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="{{ url_for('main.home') }}" class="nav-link" data-page="home">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('main.quick_solver') }}" class="nav-link" data-page="quick-solver">
+                        <i class="fas fa-rocket"></i>
+                        <span>Quick Solver</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('unit_ops.unit_operations_index') }}" class="nav-link" data-page="unit-operations">
+                        <i class="fas fa-cogs"></i>
+                        <span>Unit Ops</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('main.theory') }}" class="nav-link" data-page="theory">
+                        <i class="fas fa-book"></i>
+                        <span>Theory</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('main.about') }}" class="nav-link" data-page="about">
+                        <i class="fas fa-users"></i>
+                        <span>About</span>
+                    </a>
+                </li>
+                {% if is_logged_in %}
+                <li class="nav-item">
+                    <a href="{{ dashboard_url }}" class="nav-link" data-page="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('profile.view_profile') }}" class="nav-link" data-page="profile">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('main.historique') }}" class="nav-link" data-page="historique">
+                        <i class="fas fa-history"></i>
+                        <span>Historique</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('main.archive') }}" class="nav-link" data-page="archive">
+                        <i class="fas fa-archive"></i>
+                        <span>Archive</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+
+            <div class="sidebar-footer">
+                <p class="text-muted small">McCabe-Thiele Method</p>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span class="topbar-title">Gas Absorption Analysis</span>
+                    <a href="{{ url_for('main.billing') }}" class="billing-link" data-bs-toggle="tooltip" title="Billing & subscription">
+                        <i class="fas fa-wallet"></i>
+                    </a>
+                </div>
+                <div class="topbar-actions d-flex align-items-center gap-3">
+                    <!-- Settings Panel Button -->
+                    <button
+                        type="button"
+                        class="btn-settings-toggle"
+                        id="settings-open-btn"
+                        title="Open settings"
+                        aria-label="Open settings panel"
+                        aria-controls="settings-panel"
+                    >
+                        <i class="fas fa-cog"></i>
+                    </button>
+
+                    <!-- Theme Toggle Button -->
+                    <button class="btn-theme-toggle" data-theme-toggle title="Switch theme" aria-label="Toggle theme">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    
+                    <!-- User Menu -->
+                    {% if is_logged_in %}
+                    <div class="dropdown topbar-user-dropdown">
+                        <button
+                            type="button"
+                            class="btn topbar-user-trigger dropdown-toggle"
+                            id="topbarUserMenuButton"
+                            data-bs-toggle="dropdown"
+                            data-bs-offset="0,12"
+                            aria-expanded="false"
+                        >
+                            <span class="topbar-user-avatar" aria-hidden="true">
+                                <i class="fas fa-user-circle"></i>
+                            </span>
+                            <span class="topbar-user-meta">
+                                <span class="topbar-user-label">Account</span>
+                                <span class="topbar-user-name">{{ session.get('name') or session.get('user') }}</span>
+                            </span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end topbar-user-menu" aria-labelledby="topbarUserMenuButton">
+                            <li><a class="dropdown-item topbar-user-item" href="{{ url_for('profile.view_profile') }}">
+                                <span class="topbar-user-item-icon"><i class="fas fa-user"></i></span>
+                                <span class="topbar-user-item-label">View Profile</span>
+                            </a></li>
+                            <li><a class="dropdown-item topbar-user-item" href="{{ dashboard_url }}">
+                                <span class="topbar-user-item-icon"><i class="fas fa-tachometer-alt"></i></span>
+                                <span class="topbar-user-item-label">Dashboard</span>
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item topbar-user-item logout-item" href="{{ url_for('auth.logout') }}">
+                                <span class="topbar-user-item-icon"><i class="fas fa-sign-out-alt"></i></span>
+                                <span class="topbar-user-item-label">Logout</span>
+                            </a></li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-outline-light btn-sm" href="{{ url_for('auth.login') }}">Login</a>
+                        <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('auth.signup') }}">Signup</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="page-container">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chatbot -->
+    <div class="chatbot-widget" id="chatbotWidget">
+        <button
+            type="button"
+            class="chatbot-toggle"
+            id="chatbotToggle"
+            aria-label="Open AI assistant"
+            aria-controls="chatbotPanel"
+            aria-expanded="false"
+        >
+            <i class="fas fa-robot"></i>
+        </button>
+
+        <section class="chatbot-panel" id="chatbotPanel" aria-hidden="true">
+            <div class="chatbot-header">
+                <div>
+                    <h2 class="chatbot-title">AI Assistant</h2>
+                    <p class="chatbot-subtitle">Ask me anything - general questions & app help</p>
+                </div>
+                <button
+                    type="button"
+                    class="chatbot-close"
+                    id="chatbotClose"
+                    aria-label="Close AI assistant"
+                >
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="chatbot-messages" id="chatbotMessages"></div>
+
+            <form class="chatbot-form" id="chatbotForm">
+                <input
+                    type="text"
+                    id="chatbotInput"
+                    class="chatbot-input"
+                    placeholder="Type your message..."
+                    autocomplete="off"
+                >
+                <button type="submit" class="chatbot-send" id="chatbotSend">Send</button>
+            </form>
+        </section>
+    </div>
+
+    <!-- Toast notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Settings Panel -->
+    <div id="settings-overlay" aria-hidden="true"></div>
+    <aside id="settings-panel" aria-label="Application settings">
+        <div class="sp-header">
+            <h5><i class="fas fa-sliders-h"></i> Settings</h5>
+            <button type="button" class="sp-close" id="sp-close-btn" aria-label="Close settings panel">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sp-body" id="sp-body-content"></div>
+        <div class="sp-footer">
+            <button type="button" class="sp-btn-reset" id="sp-reset-btn">
+                <i class="fas fa-undo"></i> Reset
+            </button>
+            <button type="button" class="sp-btn-save" id="sp-save-btn">
+                <i class="fas fa-save"></i> Save
+            </button>
+        </div>
+    </aside>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Theme Switcher Script -->
+    <script src="{{ url_for('static', filename='script-theme.js') }}"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='settings-panel.js') }}"></script>
+    {% block page_scripts %}{% endblock %}
+
+    <!-- Initialize Tooltips -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+</body>
+
+</html>

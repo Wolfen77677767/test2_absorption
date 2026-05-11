@@ -1,0 +1,521 @@
+/* ================================================
+   THEME VARIABLES - Dark and Light Mode
+   ================================================ */
+
+:root,
+body.dark-mode {
+    /* Brand Colors */
+    --primary-color: #0066FF;
+    --secondary-color: #00D9FF;
+    --accent-color: #FF6B6B;
+    --bg-color: #0a0e27;
+    --text-color: #f0f5fa;
+
+    /* Core Dark Theme Colors */
+    --dark-bg: #0a0e27;
+    --card-bg: #1a1f3a;
+    --border-color: #2a3f5f;
+    --text-primary: #f0f5fa;
+    --text-secondary: #a8b5c8;
+    --text-muted: #7a8ca3;
+
+    /* Surface Helpers */
+    --bg-secondary: rgba(255, 255, 255, 0.04);
+    --bg-tertiary: rgba(255, 255, 255, 0.08);
+    --surface-soft: rgba(255, 255, 255, 0.05);
+    --surface-strong: rgba(255, 255, 255, 0.08);
+
+    /* Status Colors */
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+
+    /* Shared Motion */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.light-mode {
+    /* Brand Colors */
+    --primary-color: #0066FF;
+    --secondary-color: #00BFEA;
+    --accent-color: #FF6B6B;
+    --bg-color: #eff5fb;
+    --text-color: #11243a;
+
+    /* Core Light Theme Colors */
+    --dark-bg: #eff5fb;
+    --card-bg: #f8fbff;
+    --border-color: #d6e1ee;
+    --text-primary: #11243a;
+    --text-secondary: #597089;
+    --text-muted: #7c92aa;
+
+    /* Surface Helpers */
+    --bg-secondary: #edf4fa;
+    --bg-tertiary: #e2ecf7;
+    --surface-soft: rgba(255, 255, 255, 0.78);
+    --surface-strong: rgba(255, 255, 255, 0.92);
+
+    /* Status Colors */
+    --success-color: #059669;
+    --warning-color: #d97706;
+
+    /* Shared Motion */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html {
+    color-scheme: dark;
+}
+
+body.light-mode {
+    color-scheme: light;
+    background: linear-gradient(180deg, #f4f8fc 0%, #edf3fa 100%) !important;
+}
+
+body.dark-mode {
+    background:
+        radial-gradient(circle at top right, rgba(0, 217, 255, 0.08), transparent 34%),
+        radial-gradient(circle at 18% 8%, rgba(0, 102, 255, 0.16), transparent 28%),
+        linear-gradient(180deg, #0a0e27 0%, #070a1a 100%) !important;
+}
+
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+input,
+textarea,
+select,
+button {
+    transition: none;
+}
+
+/* ================================================
+   THEME TOGGLE BUTTON
+   ================================================ */
+
+.btn-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.btn-theme-toggle:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.btn-theme-toggle:active {
+    transform: scale(0.98);
+}
+
+.btn-theme-toggle[title] {
+    position: relative;
+}
+
+@media (max-width: 480px) {
+    .btn-theme-toggle {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+}
+
+/* ================================================
+   LIGHT MODE GLOBAL OVERRIDES
+   ================================================ */
+
+body.light-mode .wrapper,
+body.light-mode .main-content,
+body.light-mode .page-content {
+    background: transparent;
+}
+
+body.light-mode .sidebar {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(241, 247, 252, 0.94));
+    border-right-color: rgba(120, 146, 170, 0.26);
+    box-shadow: 4px 0 24px rgba(15, 23, 42, 0.08);
+}
+
+body.light-mode .sidebar-header {
+    border-bottom-color: rgba(0, 102, 255, 0.16);
+}
+
+body.light-mode .sidebar-footer {
+    border-top-color: rgba(120, 146, 170, 0.22);
+}
+
+body.light-mode .sidebar-user-profile {
+    background: rgba(0, 102, 255, 0.05);
+    border-color: rgba(0, 102, 255, 0.12);
+}
+
+body.light-mode .sidebar-user-profile:hover {
+    background: rgba(0, 102, 255, 0.08);
+}
+
+body.light-mode .nav-link {
+    color: var(--text-secondary);
+}
+
+body.light-mode .nav-link:hover {
+    color: var(--text-primary);
+    background: rgba(0, 102, 255, 0.08);
+}
+
+body.light-mode .nav-link.active {
+    background: rgba(0, 102, 255, 0.12);
+    border-left-color: var(--primary-color);
+}
+
+body.light-mode .top-bar {
+    background: rgba(255, 255, 255, 0.82);
+    border-bottom-color: rgba(120, 146, 170, 0.2);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+    backdrop-filter: blur(14px);
+}
+
+body.light-mode .topbar-user-trigger {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(239, 245, 251, 0.96));
+    border-color: rgba(120, 146, 170, 0.26);
+    color: var(--text-primary);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+body.light-mode .topbar-user-trigger:hover,
+body.light-mode .topbar-user-trigger:focus,
+body.light-mode .topbar-user-trigger.show {
+    background: linear-gradient(180deg, rgba(246, 250, 255, 0.99), rgba(231, 241, 252, 0.98));
+    box-shadow: 0 18px 32px rgba(15, 23, 42, 0.11);
+}
+
+body.light-mode .topbar-user-menu.dropdown-menu,
+body.light-mode .dropdown-menu,
+body.light-mode .modal-content {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 252, 0.98)) !important;
+    border-color: rgba(120, 146, 170, 0.22) !important;
+    box-shadow: 0 24px 44px rgba(15, 23, 42, 0.12) !important;
+    color: var(--text-primary) !important;
+}
+
+body.light-mode .topbar-user-item,
+body.light-mode .dropdown-item {
+    color: var(--text-primary) !important;
+}
+
+body.light-mode .topbar-user-item:hover,
+body.light-mode .topbar-user-item:focus,
+body.light-mode .dropdown-item:hover,
+body.light-mode .dropdown-item:focus {
+    background: rgba(0, 102, 255, 0.08) !important;
+    color: var(--primary-color) !important;
+}
+
+body.light-mode .topbar-user-item-icon {
+    background: rgba(0, 102, 255, 0.08);
+    color: var(--primary-color);
+}
+
+body.light-mode .topbar-user-item.logout-item:hover,
+body.light-mode .topbar-user-item.logout-item:focus {
+    background: rgba(255, 107, 107, 0.1) !important;
+    color: #d14343 !important;
+}
+
+body.light-mode .topbar-user-menu .dropdown-divider,
+body.light-mode .modal-header,
+body.light-mode .modal-footer {
+    border-color: rgba(120, 146, 170, 0.18) !important;
+}
+
+body.light-mode .page-header,
+body.light-mode .dashboard-hero,
+body.light-mode .summary-card,
+body.light-mode .stats-card,
+body.light-mode .activity-item,
+body.light-mode .activity-empty-state,
+body.light-mode .quick-action-tile,
+body.light-mode .upload-dropzone,
+body.light-mode .file-dropzone,
+body.light-mode .account-card,
+body.light-mode .auth-panel,
+body.light-mode .profile-card,
+body.light-mode .profile-form-card,
+body.light-mode .panel,
+body.light-mode .archive-card,
+body.light-mode .empty-card,
+body.light-mode .settings-info-card,
+body.light-mode .form-section,
+body.light-mode .graph-container,
+body.light-mode .stat-card,
+body.light-mode .hero-section,
+body.light-mode .table-toolbar,
+body.light-mode .card {
+    background: rgba(255, 255, 255, 0.84);
+    border-color: rgba(120, 146, 170, 0.2);
+    box-shadow: 0 16px 38px rgba(15, 23, 42, 0.08);
+}
+
+body.light-mode .card-header,
+body.light-mode .settings-header,
+body.light-mode .chatbot-header {
+    background: rgba(0, 102, 255, 0.06);
+    border-color: rgba(120, 146, 170, 0.18);
+}
+
+body.light-mode .upload-dropzone,
+body.light-mode .file-dropzone,
+body.light-mode .activity-empty-state {
+    border-color: rgba(120, 146, 170, 0.24);
+    background: rgba(245, 249, 253, 0.8);
+}
+
+body.light-mode .upload-dropzone:hover,
+body.light-mode .file-dropzone:hover {
+    background: rgba(236, 243, 251, 0.96);
+}
+
+body.light-mode .form-group-box,
+body.light-mode .settings-row,
+body.light-mode .timeline-card {
+    background: rgba(0, 102, 255, 0.04);
+    border-color: rgba(120, 146, 170, 0.2);
+}
+
+body.light-mode .form-control,
+body.light-mode .form-select,
+body.light-mode input[type="text"],
+body.light-mode input[type="email"],
+body.light-mode input[type="password"],
+body.light-mode input[type="number"],
+body.light-mode textarea,
+body.light-mode .input-group .form-control {
+    background: rgba(247, 250, 253, 0.95) !important;
+    border-color: rgba(120, 146, 170, 0.28) !important;
+    color: var(--text-primary) !important;
+}
+
+body.light-mode .form-control:focus,
+body.light-mode .form-select:focus,
+body.light-mode input:focus,
+body.light-mode textarea:focus {
+    background: #ffffff !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.12) !important;
+}
+
+body.light-mode .form-control:disabled,
+body.light-mode .form-control[disabled] {
+    background: #edf3f8 !important;
+    border-color: rgba(120, 146, 170, 0.24) !important;
+    color: #4a6179 !important;
+}
+
+body.light-mode .form-control::placeholder {
+    color: var(--text-muted) !important;
+}
+
+body.light-mode .input-group-text {
+    background: rgba(0, 102, 255, 0.08);
+    border-color: rgba(120, 146, 170, 0.24);
+    color: var(--primary-color);
+}
+
+body.light-mode .btn-outline-light {
+    color: var(--text-primary);
+    border-color: rgba(120, 146, 170, 0.3);
+    background: rgba(255, 255, 255, 0.72);
+}
+
+body.light-mode .btn-outline-light:hover,
+body.light-mode .btn-outline-light:focus {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background: rgba(0, 102, 255, 0.08);
+}
+
+body.light-mode .btn-outline-secondary {
+    color: var(--text-primary);
+    border-color: rgba(120, 146, 170, 0.3);
+}
+
+body.light-mode .btn-outline-secondary:hover,
+body.light-mode .btn-outline-secondary:focus {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background: rgba(0, 102, 255, 0.08);
+}
+
+body.light-mode .table,
+body.light-mode .admin-table {
+    color: var(--text-primary) !important;
+}
+
+body.light-mode .table thead th,
+body.light-mode .admin-table thead {
+    background: rgba(233, 240, 248, 0.92) !important;
+    color: #20364a !important;
+    border-color: rgba(120, 146, 170, 0.22) !important;
+}
+
+body.light-mode .table tbody td,
+body.light-mode .admin-table th,
+body.light-mode .admin-table td {
+    border-color: rgba(120, 146, 170, 0.18) !important;
+}
+
+body.light-mode .table tbody tr:hover,
+body.light-mode .admin-table tbody tr:hover {
+    background: rgba(0, 102, 255, 0.04) !important;
+}
+
+body.light-mode .table-striped tbody tr:nth-of-type(odd) {
+    background: rgba(245, 249, 253, 0.76) !important;
+}
+
+body.light-mode .badge {
+    color: var(--text-primary);
+}
+
+body.light-mode .alert {
+    border-color: rgba(120, 146, 170, 0.22);
+}
+
+body.light-mode code,
+body.light-mode pre {
+    background: rgba(236, 243, 250, 0.9) !important;
+    color: var(--text-primary) !important;
+    border-color: rgba(120, 146, 170, 0.2) !important;
+}
+
+body.light-mode .chatbot-panel,
+body.light-mode .chatbot-form {
+    background: rgba(255, 255, 255, 0.96);
+}
+
+body.light-mode .chatbot-messages {
+    background: rgba(243, 248, 252, 0.74);
+}
+
+body.light-mode .chatbot-message.bot {
+    background: rgba(255, 255, 255, 0.94);
+    border-color: rgba(120, 146, 170, 0.18);
+    color: var(--text-primary);
+}
+
+body.light-mode .chatbot-input {
+    background: rgba(247, 250, 253, 0.95);
+    border-color: rgba(120, 146, 170, 0.24);
+    color: var(--text-primary);
+}
+
+body.light-mode .spinner-overlay {
+    background: rgba(237, 244, 251, 0.82);
+}
+
+body.light-mode .btn-close-white,
+body.light-mode .btn-close {
+    filter: none;
+    opacity: 0.72;
+}
+
+/* ================================================
+   LIGHT MODE - ABOUT PAGE GLASSMORPHISM ADJUSTMENTS
+   ================================================ */
+
+body.light-mode .team-section-premium {
+    border-color: rgba(0, 102, 255, 0.14);
+    background:
+        radial-gradient(circle at top right, rgba(0, 191, 234, 0.12), transparent 32%),
+        radial-gradient(circle at bottom left, rgba(0, 102, 255, 0.1), transparent 28%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(244, 248, 252, 0.92));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.75),
+        0 24px 50px rgba(15, 23, 42, 0.09);
+}
+
+body.light-mode .team-section-premium::before {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.48), transparent 36%, transparent 72%, rgba(0, 102, 255, 0.04));
+}
+
+body.light-mode .team-section-badge,
+body.light-mode .team-premium-card,
+body.light-mode .team-contact-row,
+body.light-mode .team-copy-btn {
+    border-color: rgba(120, 146, 170, 0.18);
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.07);
+}
+
+body.light-mode .team-premium-card:hover {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.75),
+        0 22px 40px rgba(15, 23, 42, 0.1),
+        0 0 0 1px rgba(0, 102, 255, 0.05),
+        0 0 24px rgba(0, 191, 234, 0.08);
+}
+
+body.light-mode .team-premium-photo img {
+    border-color: rgba(255, 255, 255, 0.95);
+}
+
+/* ================================================
+   LIGHT MODE - PROFILE SETTINGS ADJUSTMENTS
+   ================================================ */
+
+body.light-mode .settings-dashboard,
+body.light-mode .settings-section-card,
+body.light-mode .settings-info-row,
+body.light-mode .settings-toggle-row,
+body.light-mode .settings-overview-chip,
+body.light-mode .settings-modal .modal-content,
+body.light-mode .settings-modal-note {
+    border-color: rgba(120, 146, 170, 0.18);
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+}
+
+body.light-mode .settings-dashboard {
+    background:
+        linear-gradient(135deg, rgba(0, 102, 255, 0.06), transparent 42%),
+        radial-gradient(circle at top right, rgba(0, 191, 234, 0.08), transparent 34%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(244, 248, 252, 0.94));
+}
+
+body.light-mode .danger-zone-card {
+    background: linear-gradient(180deg, rgba(255, 107, 107, 0.08), rgba(255, 255, 255, 0.86));
+}
+
+/* ================================================
+   BACKGROUND VIDEO THEME SWITCHING
+   ================================================ */
+
+/* Default: dark video visible, light video hidden */
+.bg-video.bg-light {
+    display: none;
+}
+
+/* Light mode: light video visible, dark video hidden */
+body.light-mode .bg-video.bg-light {
+    display: block;
+}
+
+body.light-mode .bg-video.bg-dark {
+    display: none;
+}

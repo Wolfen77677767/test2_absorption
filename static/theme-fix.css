@@ -1,0 +1,629 @@
+/* ================================================
+   THEME-FIX.CSS
+   Corrige les couleurs hardcodées qui ne répondaient
+   pas aux changements de thème / couleur.
+   Ce fichier override style.css via la cascade CSS.
+   ================================================ */
+
+/* ---- Variables CSS enrichies pour tous les thèmes ---- */
+body.dark-mode, :root {
+    --card-overlay: rgba(255, 255, 255, 0.04);
+    --card-border-overlay: rgba(255, 255, 255, 0.08);
+    --topbar-bg: rgba(10, 14, 39, 0.85);
+    --modal-bg: rgba(10, 14, 39, 0.95);
+}
+body.light-mode {
+    --card-overlay: rgba(0, 0, 0, 0.03);
+    --card-border-overlay: rgba(0, 0, 0, 0.1);
+    --topbar-bg: rgba(248, 250, 252, 0.9);
+    --modal-bg: rgba(248, 250, 252, 0.98);
+}
+body.theme-ocean {
+    --dark-bg: #0b1d2e; --card-bg: #12344d; --border-color: #1a4a6e;
+    --text-primary: #e0f2fe; --text-secondary: #7dd3fc; --text-muted: #38bdf8;
+    --card-overlay: rgba(14, 77, 110, 0.3);
+    --card-border-overlay: rgba(0, 200, 255, 0.15);
+    --topbar-bg: rgba(11, 29, 46, 0.92);
+    --modal-bg: rgba(11, 29, 46, 0.97);
+}
+body.theme-forest {
+    --dark-bg: #0d1f0d; --card-bg: #1a2e1a; --border-color: #2d4a2d;
+    --text-primary: #d1fae5; --text-secondary: #6ee7b7; --text-muted: #34d399;
+    --card-overlay: rgba(26, 46, 26, 0.6);
+    --card-border-overlay: rgba(52, 211, 153, 0.15);
+    --topbar-bg: rgba(13, 31, 13, 0.92);
+    --modal-bg: rgba(13, 31, 13, 0.97);
+}
+body.theme-sunset {
+    --dark-bg: #1f0d05; --card-bg: #2e1a0e; --border-color: #4a2e1a;
+    --text-primary: #fef3c7; --text-secondary: #fcd34d; --text-muted: #f59e0b;
+    --card-overlay: rgba(46, 26, 14, 0.6);
+    --card-border-overlay: rgba(245, 158, 11, 0.18);
+    --topbar-bg: rgba(31, 13, 5, 0.92);
+    --modal-bg: rgba(31, 13, 5, 0.97);
+}
+body.theme-purple {
+    --dark-bg: #1e0b2e; --card-bg: #2e1a4a; --border-color: #4a2e6e;
+    --text-primary: #ede9fe; --text-secondary: #c4b5fd; --text-muted: #a78bfa;
+    --card-overlay: rgba(46, 26, 74, 0.6);
+    --card-border-overlay: rgba(167, 139, 250, 0.18);
+    --topbar-bg: rgba(30, 11, 46, 0.92);
+    --modal-bg: rgba(30, 11, 46, 0.97);
+}
+
+/* ================================================
+   FIX: TOP BAR background
+   ================================================ */
+.top-bar {
+    background: var(--topbar-bg, rgba(26, 31, 58, 0.8)) !important;
+    backdrop-filter: blur(12px) !important;
+}
+
+/* ================================================
+   FIX: Elements with rgba(255,255,255,...) backgrounds
+   These were invisible on colored backgrounds
+   ================================================ */
+
+/* Dashboard hero & feature cards */
+.dashboard-hero,
+.feature-card,
+.summary-card,
+.action-card,
+.info-card,
+.quick-action-item,
+.result-card,
+.theory-section,
+.upload-card,
+.recent-activity-card,
+.quick-actions-card,
+.history-item,
+.archive-item,
+.profile-section,
+.about-card,
+.team-card,
+.stat-group,
+.parameter-group,
+.input-group-custom,
+.calculation-step,
+.stage-row,
+.sensitivity-card,
+.graph-container {
+    background: var(--card-bg) !important;
+    border-color: var(--card-border-overlay, var(--border-color)) !important;
+}
+
+/* Home page feature boxes specifically */
+.feature-box,
+.feature-item,
+[class*="feature-"],
+[class*="hero-"],
+[class*="quick-"],
+[class*="info-box"],
+[class*="result-"],
+[class*="step-"],
+[class*="stage-"],
+[class*="summary-"] {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Any generic container with the problematic bg */
+.dashboard-hero { border-radius: 24px; padding: 32px; }
+
+/* ================================================
+   FIX: Body background gradient — DEFAULT only (JS overrides via #sp-bg-dyn tag)
+   ================================================ */
+/* These are default backgrounds per theme, WITHOUT !important so JS can override */
+body.dark-mode {
+    background: linear-gradient(135deg, #0a0e27 0%, #1a2a4a 100%);
+}
+body.light-mode {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+body.theme-ocean {
+    background: linear-gradient(135deg, #0b1d2e 0%, #0e4d6e 100%);
+}
+body.theme-forest {
+    background: linear-gradient(135deg, #0d1f0d 0%, #1a3d1a 100%);
+}
+body.theme-sunset {
+    background: linear-gradient(135deg, #1f0d05 0%, #4a2e00 100%);
+}
+body.theme-purple {
+    background: linear-gradient(135deg, #1e0b2e 0%, #4a1a6a 100%);
+}
+
+/* Gradient backgrounds when wallpaper selected — managed by JS (#sp-bg-dyn) */
+body.bg-grad-1 { background: linear-gradient(135deg, #0a0e27 0%, #1a2a4a 100%); }
+body.bg-grad-2 { background: linear-gradient(135deg, #0b1d2e 0%, #0e4d6e 100%); }
+body.bg-grad-3 { background: linear-gradient(135deg, #1a0a0a 0%, #3d1515 100%); }
+body.bg-grad-4 { background: linear-gradient(135deg, #0a1a0a 0%, #1a3d1a 100%); }
+body.bg-grad-5 { background: linear-gradient(135deg, #1e0b2e 0%, #4a1a6a 100%); }
+body.bg-grad-6 { background: linear-gradient(135deg, #1a1000 0%, #4a2e00 100%); }
+body.bg-grad-7 { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
+body.bg-grad-8 { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
+
+/* ================================================
+   FIX: Sidebar uses theme variables
+   ================================================ */
+.sidebar {
+    background: var(--card-bg) !important;
+    border-right-color: var(--border-color) !important;
+}
+
+/* ================================================
+   FIX: Modals / Dropdowns
+   ================================================ */
+.modal-content {
+    background: var(--modal-bg, var(--card-bg)) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+.dropdown-menu {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+.dropdown-item { color: var(--text-primary) !important; }
+.dropdown-item:hover { background: rgba(0,102,255,0.1) !important; color: var(--primary-color) !important; }
+
+/* ================================================
+   FIX: Primary color on links, icons, borders
+   ================================================ */
+.nav-link.active, .nav-link:hover { color: var(--primary-color) !important; }
+.nav-link.active { border-left-color: var(--primary-color) !important; background: rgba(0,102,255,0.08) !important; }
+.sidebar-header { border-bottom-color: var(--primary-color) !important; }
+
+/* Feature card icons inherit primary color */
+.feature-icon, .hero-icon, [class*="-icon"] i.fa-calculator,
+[class*="-icon"] i.fa-sliders, [class*="-icon"] i.fa-file-pdf {
+    color: var(--primary-color) !important;
+}
+
+/* Headings in cards inherit primary */
+.feature-card h3, .feature-card h4,
+.summary-card h3, .summary-card h4,
+.card-title, [class*="card"] h3, [class*="card"] h4 {
+    color: var(--primary-color) !important;
+}
+
+/* ================================================
+   FIX: Inputs / Forms match theme
+   ================================================ */
+.form-control, .form-select, input[type="text"],
+input[type="email"], input[type="password"],
+input[type="number"], textarea, select {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+.form-control:focus, .form-select:focus, input:focus, textarea:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(0,102,255,0.15) !important;
+}
+
+/* ================================================
+   FIX: Tables
+   ================================================ */
+.table { color: var(--text-primary) !important; border-color: var(--border-color) !important; }
+.table thead th { background: var(--card-bg) !important; color: var(--text-secondary) !important; border-color: var(--border-color) !important; }
+.table tbody tr:hover td { background: rgba(0,102,255,0.06) !important; }
+
+/* ================================================
+   FIX: Badges / Alerts use theme
+   ================================================ */
+.badge.bg-primary { background: var(--primary-color) !important; }
+
+/* ================================================
+   FIX: Quick Start section (visible in screenshot)
+   ================================================ */
+.quick-start-section,
+.what-you-need,
+.youll-get,
+[class*="quick-start"],
+[class*="info-panel"],
+.border-start {
+    background: var(--card-bg) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* ================================================
+   FIX: Smooth color transitions on all elements
+   ================================================ */
+*, *::before, *::after {
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.2s ease !important;
+}
+input, button, select, textarea { transition: none !important; }
+
+/* ================================================
+   FIX: Settings panel button active state
+   ================================================ */
+.btn-settings-toggle {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+.btn-settings-toggle:hover {
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+}
+
+/* ================================================
+   HOME PAGE — classes qui remplacent les style="" hardcodés
+   ================================================ */
+
+/* Feature cards */
+.home-feature-card {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    transition: all 0.3s ease !important;
+}
+.home-feature-card:hover {
+    border-color: var(--primary-color) !important;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3) !important;
+}
+
+/* Feature icons */
+.home-feature-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+.primary-icon   { color: var(--primary-color) !important; }
+.secondary-icon { color: var(--secondary-color) !important; }
+.success-icon   { color: var(--success-color) !important; }
+
+/* Feature titles */
+.home-feature-title {
+    color: var(--secondary-color) !important;
+    margin-bottom: 12px !important;
+    font-weight: 600;
+}
+
+/* Feature text — was hardcoded #a8b5c8 */
+.home-feature-text {
+    color: var(--text-secondary) !important;
+    font-size: 14px !important;
+    line-height: 1.6;
+}
+
+/* Quick Start card */
+.home-quickstart-card {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+}
+.home-quickstart-header {
+    border-bottom-color: var(--secondary-color) !important;
+    color: var(--text-primary) !important;
+}
+.home-rocket-icon { color: var(--accent-color) !important; }
+
+/* Info boxes */
+.home-info-box {
+    padding: 20px;
+    border-radius: 10px;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+.home-info-box-primary {
+    background: rgba(0, 102, 255, 0.06) !important;
+    border-left: 3px solid var(--primary-color) !important;
+}
+.home-info-box-success {
+    background: rgba(16, 185, 129, 0.06) !important;
+    border-left: 3px solid var(--success-color) !important;
+}
+
+/* Info titles — was hardcoded #00D9FF */
+.home-info-title {
+    color: var(--secondary-color) !important;
+    margin-bottom: 10px !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+.home-info-title-primary { color: var(--primary-color) !important; }
+.home-info-title-success { color: var(--success-color) !important; }
+
+/* Info list — was hardcoded #a8b5c8 */
+.home-info-list {
+    font-size: 14px !important;
+    color: var(--text-secondary) !important;
+    margin-bottom: 0 !important;
+    padding-left: 18px;
+}
+.home-info-list li {
+    color: var(--text-secondary) !important;
+    margin-bottom: 4px;
+}
+
+/* ================================================
+   GLOBAL: Force ALL inline color styles to use vars
+   Override any remaining hardcoded colors
+   ================================================ */
+
+/* Text that was #a8b5c8 (text-secondary) */
+[style*="color: #a8b5c8"],
+[style*="color:#a8b5c8"],
+.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+/* Text that was #00D9FF (secondary) */
+[style*="color: #00D9FF"],
+[style*="color:#00D9FF"] {
+    color: var(--secondary-color) !important;
+}
+
+/* Text that was #0066FF (primary) */
+[style*="color: #0066FF"],
+[style*="color:#0066FF"] {
+    color: var(--primary-color) !important;
+}
+
+/* Text that was #f0f5fa / #e0f2fe (text-primary) */
+[style*="color: #f0f5fa"],
+[style*="color: #e0f2fe"],
+.text-light {
+    color: var(--text-primary) !important;
+}
+
+/* Background rgba whites that are invisible on colored bg */
+[style*="rgba(255, 255, 255, 0.0"],
+[style*="rgba(255,255,255,0.0"] {
+    background: var(--card-bg) !important;
+}
+
+/* ================================================
+   FIX GLOBAL COMPLET — tout le texte suit le thème
+   ================================================ */
+
+/* Force ALL text on page to use theme vars */
+body, body * {
+    color: var(--text-primary) !important;
+}
+
+/* Exceptions : éléments qui ont leur propre couleur intentionnelle */
+body .primary-icon, body [class*="primary-icon"] { color: var(--primary-color) !important; }
+body .secondary-icon, body [class*="secondary-icon"] { color: var(--secondary-color) !important; }
+body .success-icon, body [class*="success-icon"] { color: var(--success-color) !important; }
+body .home-feature-title, body [class*="-title"] h5, body [class*="-title"] h4 { color: var(--secondary-color) !important; }
+body .home-feature-text, body .home-info-list, body .home-info-list li,
+body .text-muted, body small, body .small, body p { color: var(--text-secondary) !important; }
+body h1, body h2, body h3, body h4, body h5, body h6 { color: var(--text-primary) !important; }
+body a { color: var(--primary-color) !important; }
+body .nav-link { color: var(--text-secondary) !important; }
+body .nav-link.active, body .nav-link:hover { color: var(--primary-color) !important; }
+body .sidebar-brand-name { color: var(--text-primary) !important; }
+body .topbar-title { color: var(--text-primary) !important; }
+body .btn-primary { color: #fff !important; }
+body .btn-outline-light { color: var(--text-primary) !important; border-color: var(--border-color) !important; }
+body .btn-outline-secondary { color: var(--text-secondary) !important; }
+body .dropdown-item { color: var(--text-primary) !important; }
+body .badge { color: #fff !important; }
+body .home-info-title-primary { color: var(--primary-color) !important; }
+body .home-info-title-success { color: var(--success-color) !important; }
+body .home-rocket-icon { color: #FF6B6B !important; }
+
+/* Info boxes backgrounds follow theme */
+body .home-info-box-primary {
+    background: rgba(0, 102, 255, 0.08) !important;
+    border-left-color: var(--primary-color) !important;
+}
+body .home-info-box-success {
+    background: rgba(16, 185, 129, 0.08) !important;
+    border-left-color: var(--success-color) !important;
+}
+
+/* Card content */
+body .card, body .card-body, body .card-header {
+    color: var(--text-primary) !important;
+    background: var(--card-bg) !important;
+}
+body .card-header { border-bottom-color: var(--border-color) !important; }
+
+/* ================================================
+   EXTRA WALLPAPER GRADIENTS (bg-grad-9 to bg-grad-16)
+   ================================================ */
+body.bg-grad-9  { background: linear-gradient(135deg,#0f2027,#203a43,#2c5364) !important; }
+body.bg-grad-10 { background: linear-gradient(135deg,#1a1a2e,#16213e,#0f3460) !important; }
+body.bg-grad-11 { background: linear-gradient(135deg,#2d1b69,#11998e) !important; }
+body.bg-grad-12 { background: linear-gradient(135deg,#134e5e,#71b280) !important; }
+body.bg-grad-13 { background: linear-gradient(135deg,#373b44,#4286f4) !important; }
+body.bg-grad-14 { background: linear-gradient(135deg,#c94b4b,#4b134f) !important; }
+body.bg-grad-15 { background: linear-gradient(135deg,#005c97,#363795) !important; }
+body.bg-grad-16 { background: linear-gradient(135deg,#1d2671,#c33764) !important; }
+
+/* sp-bg-option must be position:relative for label overlay */
+.sp-bg-option { position: relative !important; }
+
+/* AI bg input theming */
+#sp-ai-bg-input:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 2px rgba(0,102,255,0.15) !important;
+}
+
+/* ================================================
+   NOUVEAUX THÈMES
+   ================================================ */
+body.theme-rose {
+    --dark-bg:#1a0510; --card-bg:#2e0f1e; --border-color:#5a1a3a;
+    --text-primary:#fce7f3; --text-secondary:#f9a8d4; --text-muted:#f472b6;
+}
+body.theme-slate {
+    --dark-bg:#0f172a; --card-bg:#1e293b; --border-color:#334155;
+    --text-primary:#f1f5f9; --text-secondary:#94a3b8; --text-muted:#64748b;
+}
+body.theme-teal {
+    --dark-bg:#042f2e; --card-bg:#134e4a; --border-color:#0d9488;
+    --text-primary:#ccfbf1; --text-secondary:#5eead4; --text-muted:#2dd4bf;
+}
+body.theme-amber {
+    --dark-bg:#1c1400; --card-bg:#3d2e00; --border-color:#6b5000;
+    --text-primary:#fef9c3; --text-secondary:#fde047; --text-muted:#facc15;
+}
+
+/* Background defaults for new themes */
+body.theme-rose   { background: linear-gradient(135deg,#1a0510,#2e0f1e); }
+body.theme-slate  { background: linear-gradient(135deg,#0f172a,#1e293b); }
+body.theme-teal   { background: linear-gradient(135deg,#042f2e,#134e4a); }
+body.theme-amber  { background: linear-gradient(135deg,#1c1400,#3d2e00); }
+
+/* ================================================
+   COULEURS — grille 6 colonnes + swatches plus grands
+   ================================================ */
+.sp-colors {
+    display: grid !important;
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: 7px !important;
+}
+.sp-color-swatch {
+    width: 34px !important;
+    height: 34px !important;
+}
+
+/* ================================================
+   POLICES — grille 1 colonne avec nom de la police
+   ================================================ */
+.sp-font-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 7px !important;
+    max-height: 280px;
+    overflow-y: auto;
+}
+.sp-font-card {
+    padding: 10px 8px !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left !important;
+}
+.sp-font-card .sp-font-sample {
+    font-size: 1.2rem !important;
+    min-width: 28px;
+}
+.sp-font-card .sp-font-name {
+    font-size: 0.72rem !important;
+    line-height: 1.2;
+}
+
+/* ================================================
+   FONDS — grille 5 colonnes pour plus d'options
+   ================================================ */
+.sp-bg-grid {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 5px !important;
+    max-height: 280px;
+    overflow-y: auto;
+}
+.sp-bg-option {
+    height: 44px !important;
+}
+
+/* ================================================
+   THÈMES — grille 5 colonnes pour 10 thèmes
+   ================================================ */
+.sp-themes {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+}
+
+/* ================================================
+   FIX CRITIQUE — Tous les éléments rgba(255,255,255,...)
+   Ces éléments avaient des fonds semi-transparents blancs
+   qui apparaissaient blanc sur les thèmes clairs/colorés.
+   ================================================ */
+.dashboard-hero,
+.summary-card,
+.upload-dropzone,
+.activity-item,
+.activity-empty-state,
+.quick-action-tile,
+.page-header,
+.stats-card,
+.file-upload-label,
+.empty-card,
+.account-header,
+.profile-top,
+.settings-row,
+.timeline-card,
+.search-bar,
+.admin-table thead,
+.admin-table td,
+.about-intro,
+.team-contact-item,
+.form-section-group,
+.form-actions-bar,
+/* Home page cards */
+.home-feature-card, .feature-card, .info-card,
+[class*="card"]:not(.sp-theme-card):not(.sp-font-card):not(.sp-bg-option),
+[class*="panel"]:not(#settings-panel),
+[class*="box"]:not(.sp-bg-option),
+[class*="section"]:not(.sp-section),
+[class*="hero"],
+[class*="stat-"],
+[class*="quick-"],
+[class*="action-"],
+[class*="item-"],
+[class*="tile"],
+[class*="widget"],
+[class*="step-"],
+[class*="stage-"],
+[class*="result-"],
+[class*="param-"],
+[class*="graph-"],
+[class*="chart-"],
+[class*="plot-"],
+[class*="theory-"] {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+/* ---- Texte dans TOUS les éléments ---- */
+body *:not(script):not(style):not(.sp-color-swatch):not(.sp-bg-option):not(.sp-theme-card):not(.btn-primary):not(.badge) {
+    color: var(--text-primary) !important;
+}
+body p, body li, body small, body span:not([class*="icon"]):not([class*="fa"]) {
+    color: var(--text-secondary) !important;
+}
+body h1, body h2, body h3, body h4, body h5, body h6 {
+    color: var(--text-primary) !important;
+}
+body a:not(.btn) { color: var(--primary-color) !important; }
+body .text-muted { color: var(--text-muted) !important; }
+body .btn-primary, body .btn-primary * { color: #fff !important; background: var(--primary-color) !important; }
+body .badge { color: #fff !important; }
+body i.fas, body i.far, body i.fab, body i.fa { color: inherit !important; }
+
+/* ---- Main content background uses dark-bg ---- */
+.main-content {
+    background: transparent !important;
+}
+
+/* ---- Sections that need lighter card bg ---- */
+.page-hero, .dashboard-hero {
+    background: rgba(255,255,255,0.05) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+/* ---- Light mode specific: white cards ---- */
+body.light-mode .dashboard-hero,
+body.light-mode .summary-card,
+body.light-mode .stats-card,
+body.light-mode [class*="card"],
+body.light-mode [class*="panel"]:not(#settings-panel) {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important;
+}
+body.light-mode p, body.light-mode li, body.light-mode small, body.light-mode span:not([class*="icon"]) {
+    color: #475569 !important;
+}
+body.light-mode h1, body.light-mode h2, body.light-mode h3,
+body.light-mode h4, body.light-mode h5, body.light-mode h6 {
+    color: #0f172a !important;
+}
+

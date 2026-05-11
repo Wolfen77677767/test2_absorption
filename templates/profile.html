@@ -1,0 +1,883 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .profile-main-grid {
+        display: grid;
+        grid-template-columns: minmax(320px, 0.92fr) minmax(0, 1.08fr);
+        gap: 20px;
+        align-items: start;
+    }
+
+    .profile-main-grid .profile-left,
+    .profile-main-grid .profile-right {
+        min-width: 0;
+    }
+
+    .profile-main-grid .profile-left {
+        position: static;
+        gap: 0;
+    }
+
+    .profile-settings-row {
+        width: 100%;
+    }
+
+    .profile-settings-row .settings-dashboard {
+        width: 100%;
+    }
+
+    .settings-dashboard {
+        padding: 22px;
+        display: grid;
+        gap: 18px;
+        background:
+            linear-gradient(135deg, rgba(0, 102, 255, 0.08), transparent 42%),
+            radial-gradient(circle at top right, rgba(0, 217, 255, 0.08), transparent 36%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.02));
+        overflow: visible;
+    }
+
+    .settings-dashboard-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .settings-kicker {
+        display: inline-block;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--secondary-color);
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+
+    .settings-dashboard-header h3 {
+        margin: 0 0 6px;
+        font-size: 1.5rem;
+    }
+
+    .settings-dashboard-header p {
+        margin: 0;
+        max-width: 640px;
+        color: var(--text-secondary);
+        font-size: 0.92rem;
+        line-height: 1.65;
+    }
+
+    .settings-overview-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text-primary);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.16);
+        font-size: 0.86rem;
+        font-weight: 600;
+    }
+
+    .settings-dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        align-items: start;
+    }
+
+    .settings-section-card {
+        display: grid;
+        gap: 14px;
+        padding: 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.14);
+        transition: transform 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease, background 0.24s ease;
+        min-width: 0;
+    }
+
+    .settings-section-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(0, 102, 255, 0.28);
+        box-shadow: 0 20px 42px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+    }
+
+    .settings-section-head {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .settings-section-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(0, 102, 255, 0.22), rgba(0, 217, 255, 0.14));
+        color: var(--secondary-color);
+        font-size: 1rem;
+        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12);
+        flex-shrink: 0;
+    }
+
+    .settings-section-card h4 {
+        margin: 0 0 4px;
+        font-size: 1rem;
+    }
+
+    .settings-section-card p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.92rem;
+        line-height: 1.55;
+    }
+
+    .settings-info-list,
+    .settings-toggle-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .settings-info-row,
+    .settings-toggle-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 12px 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .settings-info-row > div:first-child,
+    .settings-toggle-row > div:first-child {
+        flex: 1 1 240px;
+        min-width: 0;
+    }
+
+    .settings-info-row strong,
+    .settings-toggle-row strong {
+        display: block;
+        font-size: 0.92rem;
+        color: var(--text-primary);
+        margin-bottom: 2px;
+        overflow-wrap: anywhere;
+    }
+
+    .settings-info-row span,
+    .settings-toggle-row span {
+        display: inline-block;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--text-muted);
+        margin-bottom: 3px;
+    }
+
+    .settings-info-row small,
+    .settings-toggle-row small {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.86rem;
+        line-height: 1.45;
+    }
+
+    .settings-card-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .settings-card-actions .btn,
+    .settings-inline-btn,
+    .settings-danger-btn {
+        border-radius: 12px;
+        padding: 9px 14px;
+        font-weight: 600;
+        box-shadow: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .settings-card-actions .btn:hover,
+    .settings-inline-btn:hover,
+    .settings-danger-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.14);
+    }
+
+    .settings-inline-btn {
+        flex-shrink: 0;
+        min-width: 82px;
+    }
+
+    .settings-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .settings-pill.verified {
+        color: var(--success-color);
+        background: rgba(16, 185, 129, 0.12);
+        border: 1px solid rgba(16, 185, 129, 0.22);
+    }
+
+    .settings-pill.pending {
+        color: var(--warning-color);
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.24);
+    }
+
+    .settings-pill.status {
+        color: var(--secondary-color);
+        background: rgba(0, 217, 255, 0.1);
+        border: 1px solid rgba(0, 217, 255, 0.16);
+    }
+
+    .settings-switch {
+        position: relative;
+        width: 54px;
+        height: 30px;
+        flex-shrink: 0;
+    }
+
+    .settings-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .settings-switch-slider {
+        position: absolute;
+        inset: 0;
+        border-radius: 999px;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: background 0.22s ease, border-color 0.22s ease;
+    }
+
+    .settings-switch-slider::before {
+        content: "";
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        left: 4px;
+        top: 4px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 10px 18px rgba(0, 0, 0, 0.2);
+        transition: transform 0.22s ease;
+    }
+
+    .settings-switch input:checked + .settings-switch-slider {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border-color: rgba(0, 102, 255, 0.4);
+    }
+
+    .settings-switch input:checked + .settings-switch-slider::before {
+        transform: translateX(24px);
+    }
+
+    .settings-theme-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 148px;
+        justify-content: center;
+    }
+
+    .danger-zone-card {
+        border-color: rgba(255, 107, 107, 0.22);
+        background: linear-gradient(180deg, rgba(255, 107, 107, 0.09), rgba(255, 255, 255, 0.02));
+    }
+
+    .danger-zone-card:hover {
+        border-color: rgba(255, 107, 107, 0.35);
+    }
+
+    .danger-zone-card .settings-section-icon {
+        background: linear-gradient(135deg, rgba(255, 107, 107, 0.22), rgba(255, 107, 107, 0.12));
+        color: #ffb1b1;
+    }
+
+    .danger-zone-warning {
+        padding: 14px 16px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 107, 107, 0.18);
+        background: rgba(255, 107, 107, 0.08);
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.55;
+    }
+
+    .danger-zone-warning strong {
+        display: block;
+        color: #ffd0d0;
+        margin-bottom: 5px;
+        font-size: 0.92rem;
+    }
+
+    .settings-modal .modal-content {
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+        box-shadow: 0 22px 48px rgba(0, 0, 0, 0.35);
+    }
+
+    .settings-modal .modal-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(0, 102, 255, 0.08);
+    }
+
+    .settings-modal .modal-title {
+        font-size: 1.02rem;
+        font-weight: 700;
+    }
+
+    .settings-modal .modal-body {
+        padding: 20px;
+        color: var(--text-secondary);
+        font-size: 0.92rem;
+        line-height: 1.65;
+    }
+
+    .settings-modal .modal-footer {
+        padding: 14px 20px 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .settings-modal-note {
+        margin-top: 12px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        background: rgba(0, 102, 255, 0.08);
+        border: 1px solid rgba(0, 102, 255, 0.14);
+        color: var(--text-primary);
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 1100px) {
+        .profile-main-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .settings-dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .settings-dashboard {
+            padding: 18px;
+        }
+
+        .settings-dashboard-header {
+            flex-direction: column;
+        }
+
+        .settings-inline-btn,
+        .settings-theme-btn,
+        .settings-danger-btn {
+            width: 100%;
+        }
+
+        .settings-card-actions .btn {
+            flex: 1 1 100%;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .settings-dashboard {
+            padding: 16px;
+        }
+
+        .settings-section-card {
+            padding: 16px;
+        }
+
+        .settings-section-head {
+            gap: 12px;
+        }
+
+        .settings-dashboard-header h3 {
+            font-size: 1.25rem;
+        }
+    }
+</style>
+
+<div class="profile-page">
+    <div class="page-header modern-header">
+        <div>
+            <span class="eyebrow">Your profile</span>
+            <h1>Manage your account</h1>
+            <p class="page-subtitle">Update personal information, upload a profile photo, and review status badges.</p>
+        </div>
+    </div>
+
+    <div class="profile-main-grid">
+        <div class="profile-left">
+            <div class="profile-card panel-shadow">
+                <div class="profile-top">
+                    <div class="profile-avatar-wrap">
+                        {% if profile_image_url %}
+                            <img src="{{ profile_image_url }}" alt="Profile avatar" class="profile-avatar">
+                        {% else %}
+                            <div class="profile-avatar-placeholder"><i class="fas fa-user"></i></div>
+                        {% endif %}
+                    </div>
+                    <div class="profile-info">
+                        <p class="profile-label">Signed in as</p>
+                        <h2 class="profile-name">{{ user.first_name }} {{ user.last_name }}</h2>
+                        <p class="profile-email">{{ user.email }}</p>
+                    </div>
+                </div>
+
+                <div class="badge-row">
+                    <span class="badge bg-info">{{ user.role.replace('_', ' ')|title }}</span>
+                    <span class="badge bg-{{ 'success' if user.is_verified else 'warning' }}">
+                        {{ 'Verified' if user.is_verified else 'Unverified' }}
+                    </span>
+                </div>
+
+                <div class="profile-stats">
+                    <div class="stat-box">
+                        <span class="stat-label">Username</span>
+                        <span class="stat-value">@{{ user.username }}</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Account status</span>
+                        <span class="stat-value">{{ user.status.replace('_', ' ')|title if user.status else ('Active' if user.is_verified else 'Pending') }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-right">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="alert-stack mb-4">
+                {% for cat, msg in messages %}
+                <div class="alert alert-{{ cat }} alert-dismissible fade show" role="alert">
+                    {{ msg }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <div class="profile-form-card panel-shadow" id="profileEditForm">
+                <div class="profile-form-header">
+                    <h3>Edit profile</h3>
+                    <p class="text-muted">Update your personal details and avatar.</p>
+                </div>
+                <form method="post" enctype="multipart/form-data" class="profile-form">
+                    <div class="form-row gap-20">
+                        <div class="form-group flex-1">
+                            <label for="first_name">First name</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="last_name">Last name</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" disabled>
+                    </div>
+                    <div class="form-group file-upload-group">
+                        <label class="file-upload-label" for="profile_picture">
+                            <div class="file-upload-content">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Upload a profile image</span>
+                            </div>
+                        </label>
+                        <input type="file" id="profile_picture" name="profile_picture" accept="image/png, image/jpeg, image/gif">
+                    </div>
+                    <div class="profile-actions">
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">Back to dashboard</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-settings-row">
+        <div class="profile-card panel-shadow settings-dashboard">
+            <div class="settings-dashboard-header">
+                <div>
+                    <span class="settings-kicker">Account settings</span>
+                    <h3>Control center</h3>
+                    <p>Keep account security clear, surface important contact information, preview preferences, and isolate sensitive actions in one place.</p>
+                </div>
+                <div class="settings-overview-chip">
+                    <i class="fas fa-sliders"></i>
+                    <span>Professional account overview</span>
+                </div>
+            </div>
+
+            <div class="settings-dashboard-grid">
+                <section class="settings-section-card">
+                    <div class="settings-section-head">
+                        <div class="settings-section-icon">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <h4>Security</h4>
+                            <p>Protect account access, review your verification state, and move into the password recovery flow when needed.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-info-list">
+                        <div class="settings-info-row">
+                            <div>
+                                <span>Email verification</span>
+                                <strong>{{ 'Verified and trusted' if user.is_verified else 'Awaiting verification' }}</strong>
+                                <small>{{ user.email }}</small>
+                            </div>
+                            <div class="settings-pill {{ 'verified' if user.is_verified else 'pending' }}">
+                                <i class="fas {{ 'fa-circle-check' if user.is_verified else 'fa-clock' }}"></i>
+                                {{ 'Verified' if user.is_verified else 'Pending' }}
+                            </div>
+                        </div>
+
+                        <div class="settings-info-row">
+                            <div>
+                                <span>Account state</span>
+                                <strong>{{ user.status.replace('_', ' ')|title if user.status else ('Active' if user.is_verified else 'Pending') }}</strong>
+                                <small>Current access state for this account in the application.</small>
+                            </div>
+                            <div class="settings-pill status">
+                                <i class="fas fa-user-shield"></i>
+                                {{ user.role.replace('_', ' ')|title }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-card-actions">
+                        <a class="btn btn-primary" href="{{ url_for('auth.forgot_password', email=user.email) }}">
+                            <i class="fas fa-key me-2"></i>Change password
+                        </a>
+                        <a class="btn btn-outline-secondary" href="{{ url_for('auth.reset_password', email=user.email) }}">
+                            <i class="fas fa-unlock me-2"></i>Use reset code
+                        </a>
+                        {% if not user.is_verified %}
+                            <a class="btn btn-outline-secondary" href="{{ url_for('auth.resend_verification', email=user.email) }}">
+                                <i class="fas fa-paper-plane me-2"></i>Resend verification
+                            </a>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <section class="settings-section-card">
+                    <div class="settings-section-head">
+                        <div class="settings-section-icon">
+                            <i class="fas fa-address-card"></i>
+                        </div>
+                        <div>
+                            <h4>Contact / Account info</h4>
+                            <p>See the main identity details tied to your account and jump to safe profile management actions from here.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-info-list">
+                        <div class="settings-info-row">
+                            <div>
+                                <span>Email address</span>
+                                <strong>{{ user.email }}</strong>
+                                <small>Primary sign-in and verification address.</small>
+                            </div>
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary settings-inline-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#changeEmailModal"
+                            >
+                                Edit
+                            </button>
+                        </div>
+
+                        <div class="settings-info-row">
+                            <div>
+                                <span>Phone</span>
+                                <strong>{{ user.phone or 'Not provided yet' }}</strong>
+                                <small>Used for personal account information visibility.</small>
+                            </div>
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary settings-inline-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#changePhoneModal"
+                            >
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="settings-section-card">
+                    <div class="settings-section-head">
+                        <div class="settings-section-icon">
+                            <i class="fas fa-toggle-on"></i>
+                        </div>
+                        <div>
+                            <h4>Preferences</h4>
+                            <p>Adjust how the interface feels day to day while keeping these controls lightweight and compatible with the existing app.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-toggle-list">
+                        <div class="settings-toggle-row">
+                            <div>
+                                <span>Appearance</span>
+                                <strong id="profileThemeModeLabel">Dark mode active</strong>
+                                <small id="profileThemeModeHint">Switch instantly between the darker dashboard theme and the softer light workspace.</small>
+                            </div>
+                            <button type="button" class="btn btn-outline-secondary settings-theme-btn" data-theme-toggle id="profileThemeToggle">
+                                <i class="fas fa-sun"></i>
+                                <span>Toggle theme</span>
+                            </button>
+                        </div>
+
+                        <div class="settings-toggle-row">
+                            <div>
+                                <span>Notifications</span>
+                                <strong id="notificationsStatus">Enabled</strong>
+                                <small>UI preview only for future alerts and reminders from the dashboard.</small>
+                            </div>
+                            <label class="settings-switch" aria-label="Toggle notifications preview">
+                                <input type="checkbox" id="notificationsToggle" checked>
+                                <span class="settings-switch-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="settings-section-card danger-zone-card">
+                    <div class="settings-section-head">
+                        <div class="settings-section-icon">
+                            <i class="fas fa-triangle-exclamation"></i>
+                        </div>
+                        <div>
+                            <h4>Danger zone</h4>
+                            <p>Keep destructive actions isolated, explicit, and clearly separated from everyday profile management.</p>
+                        </div>
+                    </div>
+
+                    <div class="danger-zone-warning">
+                        <strong>Handle with care</strong>
+                        Removing an account can affect access, history, and ownership context. This area is intentionally separated so critical actions are never triggered by accident.
+                    </div>
+
+                    <button type="button" class="btn btn-danger settings-danger-btn" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                        <i class="fas fa-trash me-2"></i>Delete account
+                    </button>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade settings-modal" id="contactInfoModal" tabindex="-1" aria-labelledby="contactInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="contactInfoModalLabel">Manage contact detail</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="contactInfoModalBody">This contact field is displayed here for visibility. Sensitive contact changes should stay deliberate so they do not interfere with your active account access.</p>
+                <div class="settings-modal-note" id="contactInfoModalNote">
+                    Use the profile form for available personal updates, or move into the security flow if the change affects sign-in or account recovery.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#profileEditForm" class="btn btn-outline-secondary" data-bs-dismiss="modal">Review profile form</a>
+                <a href="{{ url_for('auth.forgot_password', email=user.email) }}" class="btn btn-primary">Security recovery</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade settings-modal" id="changeEmailModal" tabindex="-1" aria-labelledby="changeEmailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changeEmailModalLabel">Change email address</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="changeEmailForm" method="POST" action="{{ url_for('profile.change_email') }}">
+                    <div class="mb-3">
+                        <label for="current_email" class="form-label">Current email address</label>
+                        <input type="email" class="form-control" id="current_email" name="current_email" value="{{ user.email }}" readonly>
+                        <div class="form-text">This is your current email for verification.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_email" class="form-label">New email address</label>
+                        <input type="email" class="form-control" id="new_email" name="new_email" required>
+                        <div class="form-text">Enter your new email address.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_new_email" class="form-label">Confirm new email address</label>
+                        <input type="email" class="form-control" id="confirm_new_email" name="confirm_new_email" required>
+                        <div class="form-text">Re-enter your new email address to confirm.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Current password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="form-text">Enter your current password to confirm this change.</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="changeEmailForm" class="btn btn-primary">Save email</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade settings-modal" id="changePhoneModal" tabindex="-1" aria-labelledby="changePhoneModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePhoneModalLabel">Change phone number</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="changePhoneForm" method="POST" action="{{ url_for('profile.change_phone') }}">
+                    <div class="mb-3">
+                        <label for="current_phone" class="form-label">Current phone number</label>
+                        <input type="text" class="form-control" id="current_phone" name="current_phone" value="{{ user.phone or '' }}" readonly>
+                        <div class="form-text">This is your current phone number for verification.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_phone" class="form-label">New phone number</label>
+                        <input type="text" class="form-control" id="new_phone" name="new_phone" placeholder="06XXXXXXXX or +2126XXXXXXXX" required>
+                        <div class="form-text">Enter your new Moroccan phone number.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_new_phone" class="form-label">Confirm new phone number</label>
+                        <input type="text" class="form-control" id="confirm_new_phone" name="confirm_new_phone" placeholder="06XXXXXXXX or +2126XXXXXXXX" required>
+                        <div class="form-text">Re-enter your new phone number to confirm.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Current password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="form-text">Enter your current password to confirm this change.</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="changePhoneForm" class="btn btn-primary">Save phone</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade settings-modal" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteAccountModalLabel">Confirm account deletion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong style="color: #ffd0d0;">Are you sure you want to delete your account?</strong></p>
+                <p>This action is permanent and cannot be undone. Your calculation history and profile data will be removed.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteAccountForm" method="POST" action="{{ url_for('profile.delete_account') }}" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete my account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeLabel = document.getElementById('profileThemeModeLabel');
+        const themeHint = document.getElementById('profileThemeModeHint');
+        const notificationsToggle = document.getElementById('notificationsToggle');
+        const notificationsStatus = document.getElementById('notificationsStatus');
+        const contactModal = document.getElementById('contactInfoModal');
+        const contactModalLabel = document.getElementById('contactInfoModalLabel');
+        const contactModalBody = document.getElementById('contactInfoModalBody');
+        const contactModalNote = document.getElementById('contactInfoModalNote');
+
+        function syncThemeState(theme) {
+            const activeTheme = theme || (document.body.classList.contains('light-mode') ? 'light-mode' : 'dark-mode');
+            const isLightMode = activeTheme === 'light-mode';
+
+            if (themeLabel) {
+                themeLabel.textContent = isLightMode ? 'Light mode active' : 'Dark mode active';
+            }
+
+            if (themeHint) {
+                themeHint.textContent = isLightMode
+                    ? 'Switch back to the darker dashboard theme whenever you want.'
+                    : 'Switch instantly between the darker dashboard theme and the softer light workspace.';
+            }
+        }
+
+        function syncNotificationState() {
+            if (!notificationsToggle || !notificationsStatus) {
+                return;
+            }
+            notificationsStatus.textContent = notificationsToggle.checked ? 'Enabled' : 'Muted';
+        }
+
+        syncThemeState();
+        syncNotificationState();
+
+        if (notificationsToggle) {
+            notificationsToggle.addEventListener('change', syncNotificationState);
+        }
+
+        document.addEventListener('themechange', function(event) {
+            syncThemeState(event.detail && event.detail.theme);
+        });
+
+        if (contactModal) {
+            contactModal.addEventListener('show.bs.modal', function(event) {
+                const trigger = event.relatedTarget;
+                const field = trigger ? trigger.getAttribute('data-contact-field') : '';
+
+                if (field === 'email') {
+                    contactModalLabel.textContent = 'Edit email address';
+                    contactModalBody.textContent = 'Email changes affect sign-in, verification, and password recovery, so they should stay intentional and security-aware.';
+                    contactModalNote.textContent = 'Use the existing security flow if your email access changed, then return to the profile area for the rest of your account updates.';
+                } else {
+                    contactModalLabel.textContent = 'Edit phone number';
+                    contactModalBody.textContent = 'Phone details are shown here to keep contact information visible in one place while preserving the current profile workflow.';
+                    contactModalNote.textContent = 'You can keep using the profile form for supported personal updates today without changing the underlying route structure.';
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
